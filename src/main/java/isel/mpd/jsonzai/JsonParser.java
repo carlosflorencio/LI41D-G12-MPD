@@ -10,14 +10,14 @@ public class JsonParser<T> {
 
         try {
             T obj = (T) dest.getConstructors()[0].newInstance();
-            Field[] fields = obj.getClass().getFields();
+            Field[] fields = obj.getClass().getDeclaredFields();
 
             for (int i = 0; i < fields.length; i++) {
                 String nameOfField = fields[i].getName().toLowerCase();
                 Class fieldType = fields[i].getType();
 
 
-                System.out.println(fieldType);
+                System.out.printf("%s -> Type: %s%n",nameOfField, fieldType);
             }
 
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
