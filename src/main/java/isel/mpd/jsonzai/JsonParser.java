@@ -15,12 +15,6 @@ public class JsonParser<T> {
 
     public <T> T toObject(String src, Class<T> dest){
 
-        HashMap<String, String> jsonObject = new HashMap<>();
-
-        HashMap<Type, Funcionality> strategy = new HashMap<>();
-
-        strategy.put(GithubUser.class, new GithubUserFuncionality());
-
         try {
             T obj = (T) dest.getConstructors()[0].newInstance();
             Field[] fields = obj.getClass().getFields();
