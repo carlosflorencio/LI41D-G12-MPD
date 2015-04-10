@@ -47,21 +47,10 @@ public class WeatherJson {
         Stream.of(response1.substring(0, response.length() - 1)
                           .split("[{|,]\""))
                 .filter(s -> !s.isEmpty())
-                .forEach(WeatherJson::printData);
+                .forEach(s -> System.out.println(s));
 
 
     }
 
-    public static void printData(String row) {
-        System.out.print("chave=" + getKey(row));
-        System.out.println("|valor=" + getValue(row));
-    }
 
-    public static String getKey(String row) {
-        return row.trim().substring(0, row.indexOf(':')-1);
-    }
-
-    public static String getValue(String row) {
-        return row.substring(row.indexOf(':') + 1, row.length()).trim();
-    }
 }
