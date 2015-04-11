@@ -1,8 +1,15 @@
 package isel.mpd.jsonzai;
 
+import com.google.common.io.ByteStreams;
+import isel.mpd.weather.data.HttpUrlStreamSupplier;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.MessageFormat;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class JsonParserTest {
 
@@ -38,6 +45,18 @@ public class JsonParserTest {
             "  \"created_at\": \"2008-09-16T03:24:44Z\",\n" +
             "  \"updated_at\": \"2015-04-09T13:59:15Z\"\n" +
             "}";
+
+    @Test
+    public void testStreamToObject() throws IOException {
+        String url = MessageFormat.format("https://api.github.com/users/achiu", "json");
+        HttpUrlStreamSupplier hus = new HttpUrlStreamSupplier(url);
+
+        InputStream is = hus.get();
+
+        String str = new String(ByteStreams.toByteArray(is));
+
+        System.out.println(str);
+    }
 
     @Test
     public void testToObject() throws Exception {
