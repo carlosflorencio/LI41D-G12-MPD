@@ -12,13 +12,15 @@ import java.util.stream.Stream;
  */
 public class WeatherJsonNuno {
 
-    private static final String url = MessageFormat.format("https://api.github.com/users/achiu", "json");
+    private static final String userUrl = MessageFormat.format("https://api.github.com/users/achiu", "json");
+
+    private static final String repoUrl = MessageFormat.format("https://api.github.com/users/achiu/repos", "json");
 
     public static void main(String[] args) throws IOException {
-        HttpUrlStreamSupplier httpUrlStreamSupplier = new HttpUrlStreamSupplier(url);
+        HttpUrlStreamSupplier httpUrlStreamSupplier = new HttpUrlStreamSupplier(userUrl);
 
         String result = getResultInString(httpUrlStreamSupplier.get())
-                .replaceAll("\\s+(?=([^\"]*\"[^\"]*\")*[^\"]*$)", "")   //WhiteSpaces
+                //.replaceAll("\\s+(?=([^\"]*\"[^\"]*\")*[^\"]*$)", "")   //WhiteSpaces
                 .replaceAll("\":", ":");                               // " between key and :value
 
         Stream.of(result.split("[{|,]\""))
@@ -26,10 +28,12 @@ public class WeatherJsonNuno {
                 .forEach(s -> {
                     int indexOfColon = s.indexOf(":");
 
-                    String key = s.substring(0, indexOfColon);
-                    String value = s.substring(indexOfColon + 1);
+                    if(indexOfColon != -1){
+                        String key = s.substring(0, indexOfColon);
+                        String value = s.substring(indexOfColon + 1);
 
-                    System.out.printf("%s: %s%n", key, value);
+                        System.out.printf("%s: %s%n", key, value);
+                    }
                 });
 
 //        JsonParser parser = new JsonParser();

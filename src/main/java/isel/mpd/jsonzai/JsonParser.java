@@ -1,11 +1,19 @@
 package isel.mpd.jsonzai;
 
+import isel.mpd.jsonzai.factory.TypeFactoryJson;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.stream.Stream;
 
 public class JsonParser<T> {
+
+    private static TypeFactoryJson typeFactoryJson;
+
+    public JsonParser(){
+        typeFactoryJson = new TypeFactoryJson();
+    }
 
     public <T> T toObject(String src, Class<T> dest) throws IllegalAccessException, InvocationTargetException, InstantiationException {
         String result = src
@@ -25,14 +33,14 @@ public class JsonParser<T> {
 
                     for (int i = 0; i < fields.length; i++) {
                         String nameOfField = fields[i].getName().toLowerCase();
-                        Class fieldType = fields[i].getType();
                         if(nameOfField.equals(key)){
-                            //TODO: match creator and apply
-                            //fields[i].set(obj, ...);
+                            try {
+                                fields[i].set(obj, typeFactoryJson.getCreator(value).apply(value));
+                            } catch (IllegalAccessException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
-
-                    System.out.printf("%s: %s%n", key, value);
                 });
 
             return obj;
