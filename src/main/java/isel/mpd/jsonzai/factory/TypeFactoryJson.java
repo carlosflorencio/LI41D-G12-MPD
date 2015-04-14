@@ -1,13 +1,18 @@
 package isel.mpd.jsonzai.factory;
 
-import isel.mpd.jsonzai.types.IntegerTypeCreator;
-import isel.mpd.jsonzai.types.StringTypeCreator;
+import isel.mpd.jsonzai.types.*;
 
 public class TypeFactoryJson extends TypeFactoryBase<String> {
 
+    // ORDER MATTERS!
     private TypeCreatorInterface[] types = {
+            new BooleanTypeCreator(),
+            new CharacterTypeCreator(),
             new StringTypeCreator(),
-            new IntegerTypeCreator()
+            new IntegerTypeCreator(),
+            new FloatTypeCreator(),
+            new DoubleTypeCreator(),
+            new LongTypeCreator()
     };
 
 
