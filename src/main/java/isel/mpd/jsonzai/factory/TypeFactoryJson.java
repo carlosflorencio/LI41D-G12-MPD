@@ -1,6 +1,6 @@
 package isel.mpd.jsonzai.factory;
 
-import isel.mpd.jsonzai.types.*;
+import isel.mpd.jsonzai.factory.types.*;
 
 public class TypeFactoryJson extends TypeFactoryBase<String> {
 
@@ -19,7 +19,7 @@ public class TypeFactoryJson extends TypeFactoryBase<String> {
     @Override
     public TypeCreatorInterface getCreator(String value) {
         for (int i = 0; i < types.length; i++) {
-            if(types[i].match(value)){
+            if(types[i].test(value)){
                 return types[i];
             }
         }

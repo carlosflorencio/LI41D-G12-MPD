@@ -1,4 +1,4 @@
-package isel.mpd.jsonzai.types;
+package isel.mpd.jsonzai.factory.types;
 
 import org.junit.Test;
 

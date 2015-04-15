@@ -1,6 +1,7 @@
 package isel.mpd.jsonzai;
 
 import com.google.common.io.ByteStreams;
+import isel.mpd.jsonzai.entities.GithubUser;
 import isel.mpd.weather.data.HttpUrlStreamSupplier;
 import org.junit.Test;
 

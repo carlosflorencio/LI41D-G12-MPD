@@ -1,4 +1,4 @@
-package isel.mpd.jsonzai.types;
+package isel.mpd.jsonzai.factory.types;
 
 import org.junit.Test;
 
@@ -18,9 +18,9 @@ public class CharacterTypeCreatorTest {
 
         CharacterTypeCreator ctc = new CharacterTypeCreator();
 
-        assertTrue(ctc.match(value));
+        assertTrue(ctc.test(value));
         assertEquals(new Character('o'), ctc.apply(value));
-        assertFalse(ctc.match(wrongValue));
+        assertFalse(ctc.test(wrongValue));
     }
 
 }

@@ -1,4 +1,4 @@
-package isel.mpd.jsonzai.types;
+package isel.mpd.jsonzai.factory.types;
 
 import org.junit.Test;
 
@@ -15,11 +15,11 @@ public class IntegerTypeCreatorTest {
     public void IntegerTypeCreatorMethodsTest(){
         IntegerTypeCreator itc = new IntegerTypeCreator();
 
-        assertThat(false, is(equalTo(itc.match("1.1"))));
-        assertThat(false, is(equalTo(itc.match("1,1"))));
-        assertThat(false, is(equalTo(itc.match("2015-12-12"))));
+        assertThat(false, is(equalTo(itc.test("1.1"))));
+        assertThat(false, is(equalTo(itc.test("1,1"))));
+        assertThat(false, is(equalTo(itc.test("2015-12-12"))));
 
-        assertThat(true, is(equalTo(itc.match("1897685"))));
+        assertThat(true, is(equalTo(itc.test("1897685"))));
     }
 
 }

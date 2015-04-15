@@ -1,4 +1,4 @@
-package isel.mpd.jsonzai.types;
+package isel.mpd.jsonzai.factory.types;
 
 import isel.mpd.jsonzai.factory.TypeCreator;
 
@@ -7,7 +7,7 @@ import isel.mpd.jsonzai.factory.TypeCreator;
  */
 public class CharacterTypeCreator extends TypeCreator<String, Character> {
     @Override
-    public boolean match(String value) {
+    public boolean test(String value) {
         return value.startsWith("\"") && value.endsWith("\"") && value.length() == 3;
     }
 

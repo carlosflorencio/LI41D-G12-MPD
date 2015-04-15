@@ -1,4 +1,4 @@
-package isel.mpd.jsonzai.types;
+package isel.mpd.jsonzai.factory.types;
 
 import isel.mpd.jsonzai.factory.TypeCreator;
 
@@ -8,7 +8,7 @@ import isel.mpd.jsonzai.factory.TypeCreator;
 public class IntegerTypeCreator extends TypeCreator<String, Integer> {
 
     @Override
-    public boolean match(String value) {
+    public boolean test(String value) {
         try {
             Integer.parseInt(value);
             return true;
