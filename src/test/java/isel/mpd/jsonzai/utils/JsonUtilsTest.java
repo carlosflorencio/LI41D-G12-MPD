@@ -1,5 +1,6 @@
 package isel.mpd.jsonzai.utils;
 
+import isel.mpd.weather.data.stringsuppliers.StringSupplier;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -19,6 +20,20 @@ public class JsonUtilsTest {
             "  \"public_repos\": 51,\n" +
             "  \"following\": 38,\n" +
             "  \"created_at\": \"2008-09-16T03:24:44Z\"\n" +
+            "}";
+
+    private String jsonObjects = "{\n" +
+            "    \"id\": 363183,\n" +
+            "    \"name\": \"achiu.github.com\",\n" +
+            "    \"full_name\": \"achiu/achiu.github.com\",\n" +
+            "    \"owner\": {\n" +
+            "        \"login\": \"achiu\",\n" +
+            "        \"site_admin\": true,\n" +
+            "        \"object\": {\n" +
+            "            \"test\": \"oi\"\n" +
+            "        }\n" +
+            "    },\n" +
+            "    \"private\": false\n" +
             "}";
 
     @Test
@@ -43,19 +58,28 @@ public class JsonUtilsTest {
     public void testGetKey() throws Exception {
         String clean = JsonUtils.clean(json);
 
-        assertEquals(JsonUtils.getKey("\"type\":\"User\""), "type");
-        assertEquals(JsonUtils.getKey("\"blog\":\"\""), "blog");
-        assertEquals(JsonUtils.getKey("\"following\":38"), "following");
-        assertEquals(JsonUtils.getKey("\"bio\":null"), "bio");
+        assertEquals("type", JsonUtils.getKey("\"type\":\"User\""));
+        assertEquals("blog", JsonUtils.getKey("\"blog\":\"\""));
+        assertEquals("following", JsonUtils.getKey("\"following\":38"));
+        assertEquals("bio", JsonUtils.getKey("\"bio\":null"));
     }
 
     @Test
     public void testGetValue() throws Exception {
         String clean = JsonUtils.clean(json);
 
-        assertEquals(JsonUtils.getValue("\"type\":\"User\""), "\"User\"");
-        assertEquals(JsonUtils.getValue("\"blog\":\"\""), "\"\"");
-        assertEquals(JsonUtils.getValue("\"following\":38"), "38");
-        assertEquals(JsonUtils.getValue("\"bio\":null"), "null");
+        assertEquals("\"User\"", JsonUtils.getValue("\"type\":\"User\""));
+        assertEquals("\"\"", JsonUtils.getValue("\"blog\":\"\""));
+        assertEquals("38", JsonUtils.getValue("\"following\":38"));
+        assertEquals("null", JsonUtils.getValue("\"bio\":null"));
+        assertEquals("\"test\"", JsonUtils.getValue("\"t\":\"test\","));
+    }
+
+    @Test
+    public void testGetObject() throws Exception {
+        String json = JsonUtils.clean(jsonObjects);
+        String should = "{\"login\":\"achiu\",\"site_admin\":true,\"object\":{\"test\":\"oi\"}}";
+
+        assertEquals(should, JsonUtils.getObject(json, "owner"));
     }
 }
