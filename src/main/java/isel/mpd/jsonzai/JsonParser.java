@@ -5,6 +5,7 @@ import isel.mpd.jsonzai.utils.JsonUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.LinkedList;
 import java.util.List;
 
 public class JsonParser<T> {
@@ -21,36 +22,41 @@ public class JsonParser<T> {
         T obj = (T) dest.getConstructors()[0].newInstance();
         Field[] fields = obj.getClass().getDeclaredFields();
 
-        int i=0;
-        int index = src.indexOf(fields[i].getName().toLowerCase());
+        int initialIndex, finalIdx;
+        for (Field field : fields) {
+            String nameOfField = field.getName().toLowerCase();
+            if(JsonUtils.isPrimitive(field.getType())){
+                initialIndex = result.indexOf(nameOfField)+nameOfField.length()+2;
+                finalIdx = result.indexOf(",", initialIndex);
 
+                field.set(obj, typeFactoryJson.getCreator(result.substring(initialIndex, finalIdx)));
+            }
+            else if(field.getType().isAssignableFrom(String.class)){
+                initialIndex = result.indexOf(nameOfField)+nameOfField.length()+2;
+                finalIdx = result.indexOf("\",", initialIndex) + 1;
 
+                field.set(obj, typeFactoryJson.getCreator(result.substring(initialIndex, finalIdx)));
+            } else {
+                field.set(obj, toObject(JsonUtils.getObject(result, nameOfField), field.getClass()));
+            }
+        }
 
-//        Stream.of(result.split("[{|,]\""))
-//                .filter(s -> !s.isEmpty())
-//                .forEach(s -> {
-//                    int indexOfColon = s.indexOf(":");
-//                    String key = s.substring(0, indexOfColon);
-//                    String value = s.substring(indexOfColon + 1);
-//
-//                    for (int i = 0; i < fields.length; i++) {
-//                        String nameOfField = fields[i].getName().toLowerCase();
-//                        if(nameOfField.equals(key)){
-//                            try {
-//                                fields[i].set(obj, typeFactoryJson.getCreator(value).apply(value));
-//                            } catch (IllegalAccessException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                    }
-//                });
-
-            return obj;
+        return obj;
     }
 
 
-    public <T> List<T> toList(String src, Class<T> dest){
+    public <T> List<T> toList(String src, Class<T> dest) throws IllegalAccessException, InstantiationException, InvocationTargetException {
+        List<T> list = new LinkedList<>();
 
-        return null;
+        int i = 1;
+        while (i < src.length()) {
+            String strObj = JsonUtils.getObject(src, i);
+            T obj = toObject(strObj, dest);
+
+            list.add(obj);
+
+            i += strObj.length() + 1;
+        }
+        return list;
     }
 }

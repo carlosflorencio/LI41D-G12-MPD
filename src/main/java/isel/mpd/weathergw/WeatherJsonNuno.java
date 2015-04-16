@@ -23,56 +23,28 @@ public class WeatherJsonNuno {
         String result = getResultInString(httpUrlStreamSupplier.get());
 
         GithubRepo user = new GithubRepo();
+        //GithubUser user = new GithubUser();
 
         Field[] fields = user.getClass().getDeclaredFields();
 
         for (Field field : fields) {
             String nameOfField = field.getName().toLowerCase();
             if(isPrimitive(field.getType())){
-                int initialIndex = result.indexOf(nameOfField);
+                int initialIndex = result.indexOf(nameOfField)+nameOfField.length()+2;
                 int finalIdx = result.indexOf(",", initialIndex);
-                String aux = result.substring(initialIndex-1, finalIdx);
+                String aux = result.substring(initialIndex, finalIdx);
 
                 System.out.println(aux);
             }
             else if(field.getType().isAssignableFrom(String.class)){
-
+                int initialIndex = result.indexOf(nameOfField)+nameOfField.length()+2;
+                int finalIdx = result.indexOf("\",", initialIndex)+1;
+                System.out.println(result.substring(initialIndex, finalIdx));
             }
             else{
                 System.out.println(getObjectFromJson(result, nameOfField));
             }
         }
-    }
-
-    private static String getObjectFromJson(String result, String nameOfField) {
-        int initialIndex = result.indexOf(nameOfField)+nameOfField.length()+2;
-        int numberOfBrackets = 1;
-        int i = 0;
-        for (i = initialIndex; numberOfBrackets != 0; i++) {
-            char c = result.charAt(i);
-            if(c == '{'){
-                numberOfBrackets++;
-            }
-            else if(c == '}'){
-                numberOfBrackets--;
-            }
-        }
-        return result.substring(initialIndex, i);
-    }
-
-    private static boolean isPrimitive(Class<?> type) {
-        return type.isAssignableFrom(Integer.class) ||
-                type.isAssignableFrom(int.class) ||
-                type.isAssignableFrom(Double.class) ||
-                type.isAssignableFrom(double.class) ||
-                type.isAssignableFrom(Boolean.class) ||
-                type.isAssignableFrom(boolean.class) ||
-                type.isAssignableFrom(Float.class) ||
-                type.isAssignableFrom(float.class) ||
-                type.isAssignableFrom(Long.class) ||
-                type.isAssignableFrom(long.class) ||
-                type.isAssignableFrom(Character.class) ||
-                type.isAssignableFrom(char.class);
     }
 
     private static String getResultInString(InputStream inputStream) throws IOException {

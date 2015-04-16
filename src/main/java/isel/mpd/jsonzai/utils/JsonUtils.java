@@ -33,6 +33,37 @@ public class JsonUtils {
 
     public static String cleanObject(String json) {
         String res = clean(json).replaceAll("\":", ":"); // quote between key and :value
-        return  res.substring(1, res.length()-2);       // Remove first and last { }
+        return  res.substring(1, res.length() - 2);       // Remove first and last { }
+    }
+
+    public static boolean isPrimitive(Class<?> type) {
+        return type.isAssignableFrom(Integer.class) ||
+                type.isAssignableFrom(int.class) ||
+                type.isAssignableFrom(Double.class) ||
+                type.isAssignableFrom(double.class) ||
+                type.isAssignableFrom(Boolean.class) ||
+                type.isAssignableFrom(boolean.class) ||
+                type.isAssignableFrom(Float.class) ||
+                type.isAssignableFrom(float.class) ||
+                type.isAssignableFrom(Long.class) ||
+                type.isAssignableFrom(long.class) ||
+                type.isAssignableFrom(Character.class) ||
+                type.isAssignableFrom(char.class);
+    }
+
+    public static String getObject(String result, String nameOfField) {
+        int initialIndex = result.indexOf(nameOfField)+nameOfField.length()+2;
+        int numberOfBrackets = 1;
+        int i = 0;
+        for (i = initialIndex; numberOfBrackets != 0; i++) {
+            char c = result.charAt(i);
+            if(c == '{'){
+                numberOfBrackets++;
+            }
+            else if(c == '}'){
+                numberOfBrackets--;
+            }
+        }
+        return result.substring(initialIndex, i);
     }
 }
