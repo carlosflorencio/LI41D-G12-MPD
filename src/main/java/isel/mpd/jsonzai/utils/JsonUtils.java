@@ -59,12 +59,29 @@ public class JsonUtils {
      * @param field
      * @return
      */
-    public static String getObject(String json, String field) {
-        if (!json.contains("\"" + field + "\""))
-            return null;
+    public static String getObject(String json, int beginIndex) {
+        int numberOfBrackets = 1;
+        int i;
+        for (i = beginIndex+1; numberOfBrackets != 0; i++) {
+            char c = json.charAt(i);
+            if(c == '{'){
+                numberOfBrackets++;
+            }
+            else if(c == '}'){
+                numberOfBrackets--;
+            }
+        }
 
+        return json.substring(beginIndex, i);
+    }
 
-
-        return "";
+    /**
+     * Get the begin index of value by key
+     * @param json
+     * @param key
+     * @return
+     */
+    public static int getBeginIndexOfValue(String json, String key) {
+        return json.indexOf(key) + key.length() + 2; //quotes counts too
     }
 }

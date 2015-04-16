@@ -79,7 +79,15 @@ public class JsonUtilsTest {
     public void testGetObject() throws Exception {
         String json = JsonUtils.clean(jsonObjects);
         String should = "{\"login\":\"achiu\",\"site_admin\":true,\"object\":{\"test\":\"oi\"}}";
+        int index = JsonUtils.getBeginIndexOfValue(json, "owner");
 
-        assertEquals(should, JsonUtils.getObject(json, "owner"));
+        assertEquals(should, JsonUtils.getObject(json, index));
+    }
+
+    @Test
+    public void testGetBeginIndexOfValue() throws Exception {
+        String json = "{\"id\":12}";
+
+        assertEquals(6, JsonUtils.getBeginIndexOfValue(json, "id"));
     }
 }
