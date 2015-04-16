@@ -17,9 +17,8 @@ public class JsonUtils {
      * @return
      */
     public static String getKey(String row) {
-        if(row.startsWith("\"")) //remove first quote to help the split of the streams
-            row = row.substring(1, row.length() -1);
-        return row.trim().substring(0, row.indexOf(':') - 1);
+        int indexOfColon = row.indexOf(":");
+        return row.substring(0, indexOfColon);
     }
 
     /**
@@ -28,6 +27,12 @@ public class JsonUtils {
      * @return
      */
     public static String getValue(String row) {
-        return row.substring(row.indexOf(':') + 1, row.length()).trim();
+        int indexOfColon = row.indexOf(":");
+        return row.substring(indexOfColon + 1);
+    }
+
+    public static String cleanObject(String json) {
+        String res = clean(json).replaceAll("\":", ":"); // quote between key and :value
+        return  res.substring(1, res.length()-2);       // Remove first and last { }
     }
 }
