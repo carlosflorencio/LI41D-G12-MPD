@@ -1,9 +1,5 @@
 package isel.mpd.jsonzai.utils;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Stack;
-
 public class JsonUtils {
 
     /**
@@ -99,6 +95,8 @@ public class JsonUtils {
      * @return
      */
     public static int getBeginIndexOfValue(String json, String key) {
-        return json.indexOf(key) + key.length() + 2; //quotes counts too
+        int idx = json.indexOf(key);
+
+        return  idx < 0 ? -1 : idx + key.length() + 2; //quotes counts too
     }
 }

@@ -89,5 +89,6 @@ public class JsonUtilsTest {
         String json = "{\"id\":12}";
 
         assertEquals(6, JsonUtils.getBeginIndexOfValue(json, "id"));
+        assertEquals('1', json.charAt(6));
     }
 }

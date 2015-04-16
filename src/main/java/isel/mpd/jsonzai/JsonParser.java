@@ -17,28 +17,35 @@ public class JsonParser<T> {
     }
 
     public <T> T toObject(String src, Class<T> dest) throws IllegalAccessException, InvocationTargetException, InstantiationException {
-        String result = JsonUtils.cleanObject(src);
+        src = JsonUtils.clean(src);
 
         T obj = (T) dest.getConstructors()[0].newInstance();
         Field[] fields = obj.getClass().getDeclaredFields();
 
         for (Field field : fields) {
             String nameOfField = field.getName().toLowerCase();
-            int initialIndex = result.indexOf(nameOfField)+nameOfField.length()+1;
-            int finalIdx;
-            if(JsonUtils.isPrimitive(field.getType())){
-                finalIdx = result.indexOf(",", initialIndex);
+            int initialIndex = JsonUtils.getBeginIndexOfValue(src, nameOfField);
 
-                field.set(obj, typeFactoryJson.getCreator(result.substring(initialIndex, finalIdx))
-                                .apply(result.substring(initialIndex, finalIdx)));
+            if(initialIndex == -1) { //no key in json
+                continue;
+            }
+
+            int finalIdx;
+
+            if(JsonUtils.isPrimitive(field.getType())){
+                finalIdx = src.indexOf(",", initialIndex);
+                String value = src.substring(initialIndex, finalIdx);
+
+                field.set(obj, typeFactoryJson.getCreator(value).apply(value));
             }
             else if(field.getType().isAssignableFrom(String.class)){
-                finalIdx = result.indexOf("\",", initialIndex) + 1;
+                finalIdx = src.indexOf("\",", initialIndex) + 1;
+                String value = src.substring(initialIndex, finalIdx);
 
-                field.set(obj, typeFactoryJson.getCreator(result.substring(initialIndex, finalIdx))
-                        .apply(result.substring(initialIndex, finalIdx)));
+                field.set(obj, typeFactoryJson.getCreator(value).apply(value));
             } else {
-                field.set(obj, toObject(JsonUtils.getObject(result, initialIndex), field.getType()));
+                String value = JsonUtils.getObject(src, initialIndex);
+                field.set(obj, toObject(value, field.getType()));
             }
         }
 
@@ -52,7 +59,6 @@ public class JsonParser<T> {
         int i = 1;
         while (i < src.length()) {
             String strObj = JsonUtils.getObject(src, i);
-            System.out.println(strObj);
             T obj = toObject(strObj, dest);
 
             list.add(obj);
