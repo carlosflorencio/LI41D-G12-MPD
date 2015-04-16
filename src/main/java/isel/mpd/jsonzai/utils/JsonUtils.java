@@ -1,5 +1,7 @@
 package isel.mpd.jsonzai.utils;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Stack;
 
 public class JsonUtils {
@@ -65,23 +67,6 @@ public class JsonUtils {
                 type.isAssignableFrom(long.class) ||
                 type.isAssignableFrom(Character.class) ||
                 type.isAssignableFrom(char.class);
-    }
-
-    public static String getObject(String result, String nameOfField) {
-        int initialIndex = result.indexOf(nameOfField)+nameOfField.length()+2;
-        int numberOfBrackets = 1;
-        int i = 0;
-        for (i = initialIndex; numberOfBrackets != 0; i++) {
-            char c = result.charAt(i);
-            if(c == '{'){
-                numberOfBrackets++;
-            }
-            else if(c == '}'){
-                numberOfBrackets--;
-            }
-        }
-        return result.substring(initialIndex, i);
-        return res.substring(1, res.length() - 2);       // Remove first and last { }
     }
 
     /**

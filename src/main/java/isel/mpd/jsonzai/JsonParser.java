@@ -22,22 +22,23 @@ public class JsonParser<T> {
         T obj = (T) dest.getConstructors()[0].newInstance();
         Field[] fields = obj.getClass().getDeclaredFields();
 
-        int initialIndex, finalIdx;
         for (Field field : fields) {
             String nameOfField = field.getName().toLowerCase();
+            int initialIndex = result.indexOf(nameOfField)+nameOfField.length()+1;
+            int finalIdx;
             if(JsonUtils.isPrimitive(field.getType())){
-                initialIndex = result.indexOf(nameOfField)+nameOfField.length()+2;
                 finalIdx = result.indexOf(",", initialIndex);
 
-                field.set(obj, typeFactoryJson.getCreator(result.substring(initialIndex, finalIdx)));
+                field.set(obj, typeFactoryJson.getCreator(result.substring(initialIndex, finalIdx))
+                                .apply(result.substring(initialIndex, finalIdx)));
             }
             else if(field.getType().isAssignableFrom(String.class)){
-                initialIndex = result.indexOf(nameOfField)+nameOfField.length()+2;
                 finalIdx = result.indexOf("\",", initialIndex) + 1;
 
-                field.set(obj, typeFactoryJson.getCreator(result.substring(initialIndex, finalIdx)));
+                field.set(obj, typeFactoryJson.getCreator(result.substring(initialIndex, finalIdx))
+                        .apply(result.substring(initialIndex, finalIdx)));
             } else {
-                field.set(obj, toObject(JsonUtils.getObject(result, nameOfField), field.getClass()));
+                field.set(obj, toObject(JsonUtils.getObject(result, initialIndex), field.getType()));
             }
         }
 
@@ -51,6 +52,7 @@ public class JsonParser<T> {
         int i = 1;
         while (i < src.length()) {
             String strObj = JsonUtils.getObject(src, i);
+            System.out.println(strObj);
             T obj = toObject(strObj, dest);
 
             list.add(obj);

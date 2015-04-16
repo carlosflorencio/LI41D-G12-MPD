@@ -1,18 +1,26 @@
 package isel.mpd.jsonzai;
 
 import com.google.common.io.ByteStreams;
+import isel.mpd.jsonzai.entities.GithubRepo;
 import isel.mpd.jsonzai.entities.GithubUser;
+import isel.mpd.jsonzai.utils.IOUtils;
 import isel.mpd.weather.data.HttpUrlStreamSupplier;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class JsonParserTest {
+
+    private static final String userUrl = MessageFormat.format("https://api.github.com/users/achiu", "json");
+
+    private static final String repoUrl = MessageFormat.format("https://api.github.com/users/achiu/repos", "json");
 
     private String request1 = "{\n" +
             "  \"login\": \"achiu\",\n" +
@@ -88,5 +96,20 @@ public class JsonParserTest {
         assertEquals(user.email, "achiu@github.com");
         assertEquals(user.location, "San Francisco, CA");
         assertEquals(user.id, 24772);
+    }
+
+    @Test
+    public void testToList() throws IOException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        HttpUrlStreamSupplier httpUrlStreamSupplier = new HttpUrlStreamSupplier(repoUrl);
+
+        String response = IOUtils.getResultInString(httpUrlStreamSupplier.get());
+
+        JsonParser<GithubRepo> parser = new JsonParser<>();
+
+        List<GithubRepo> repos = parser.<GithubRepo>toList(response, GithubRepo.class);
+
+        return;
+
+
     }
 }

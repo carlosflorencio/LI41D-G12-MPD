@@ -1,10 +1,11 @@
 package isel.mpd.weathergw;
 
 import isel.mpd.jsonzai.entities.GithubRepo;
+import isel.mpd.jsonzai.utils.IOUtils;
+import isel.mpd.jsonzai.utils.JsonUtils;
 import isel.mpd.weather.data.HttpUrlStreamSupplier;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.text.MessageFormat;
 
@@ -20,7 +21,7 @@ public class WeatherJsonNuno {
     public static void main(String[] args) throws IOException {
         HttpUrlStreamSupplier httpUrlStreamSupplier = new HttpUrlStreamSupplier(repoUrl);
 
-        String result = getResultInString(httpUrlStreamSupplier.get());
+        String result = IOUtils.getResultInString(httpUrlStreamSupplier.get());
 
         GithubRepo user = new GithubRepo();
         //GithubUser user = new GithubUser();
@@ -29,7 +30,7 @@ public class WeatherJsonNuno {
 
         for (Field field : fields) {
             String nameOfField = field.getName().toLowerCase();
-            if(isPrimitive(field.getType())){
+            if(JsonUtils.isPrimitive(field.getType())){
                 int initialIndex = result.indexOf(nameOfField)+nameOfField.length()+2;
                 int finalIdx = result.indexOf(",", initialIndex);
                 String aux = result.substring(initialIndex, finalIdx);
@@ -42,17 +43,8 @@ public class WeatherJsonNuno {
                 System.out.println(result.substring(initialIndex, finalIdx));
             }
             else{
-                System.out.println(getObjectFromJson(result, nameOfField));
+               // System.out.println(getObjectFromJson(result, nameOfField));
             }
         }
-    }
-
-    private static String getResultInString(InputStream inputStream) throws IOException {
-        StringBuffer result = new StringBuffer();
-        int read = 0;
-        while((read = inputStream.read()) != -1){
-            result.append((char) read);
-        }
-        return result.toString();
     }
 }
