@@ -60,6 +60,24 @@ public class JsonParserTest {
     }
 
     @Test
+    public void randomTest(){
+        String src = "\"nome\":\"achiu\",";
+
+        int index = src.indexOf("nome");
+
+        System.out.println(src.substring(index-1));
+    }
+
+    @Test
+    public void randomTest2(){
+        String str = "owner\":{\"login\":\"achiu\",";
+
+        int index = str.indexOf("owner")+"owner".length()+3;
+
+        System.out.println(str.substring(index));
+    }
+
+    @Test
     public void testToObject() throws Exception {
         JsonParser<GithubUser> parser = new JsonParser<>();
 
