@@ -19,7 +19,6 @@ public class IntegerTypeCreatorTest {
     @Test
     public void IntegerTypeCreatorMethodApplyTest(){
         assertThat(1897685, is(equalTo(creator.apply("1897685"))));
-
     }
 
 }
