@@ -4,6 +4,9 @@ import java.util.List;
 
 public class TypeUtils {
 
+    private TypeUtils() {
+    }
+
     public static boolean isPrimitive(Class<?> type) {
         return type.isAssignableFrom(Integer.class) ||
                 type.isAssignableFrom(Double.class) ||

@@ -7,6 +7,8 @@ import java.util.regex.Pattern;
 
 public class JsonUtils {
 
+    private JsonUtils() {
+    }
 
     /**
      * Get the key of a json row ex "name": "John Doe" -> name
