@@ -71,8 +71,8 @@ public class JsonUtils {
      * @return
      */
     public static String getObject(String json, int beginIndex, char initialJsonSpec, char finalJsonSpec) {
-        int i, numberOfBrackets;
-        for (i = beginIndex+1, numberOfBrackets = 1; numberOfBrackets > 0; i++) {
+        int i = beginIndex +1, numberOfBrackets = 1;
+        while (numberOfBrackets > 0) {
             char c = json.charAt(i);
             if(c == initialJsonSpec){
                 numberOfBrackets++;
@@ -80,6 +80,7 @@ public class JsonUtils {
             else if(c == finalJsonSpec){
                 numberOfBrackets--;
             }
+            i++;
         }
 
         return json.substring(beginIndex, i);
