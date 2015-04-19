@@ -65,7 +65,7 @@ public class JsonParser<T> {
 
         int i = 1;
         while (i < src.length()) {
-            String strObj = JsonUtils.getObject(src, i, '{', '}');
+            String strObj = JsonUtils.getObject(src, i, '{', '}');  //ArrayTests fails here
             T obj = toObject(strObj, dest);
 
             list.add(obj);

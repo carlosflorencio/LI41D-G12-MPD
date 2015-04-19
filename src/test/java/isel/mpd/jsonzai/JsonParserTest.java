@@ -1,5 +1,6 @@
 package isel.mpd.jsonzai;
 
+import isel.mpd.jsonzai.entities.ArrayTest;
 import isel.mpd.jsonzai.entities.GithubRepo;
 import isel.mpd.jsonzai.entities.GithubUser;
 import isel.mpd.weather.data.stringsuppliers.SimpleStringSupplierFromStream;
@@ -63,5 +64,14 @@ public class JsonParserTest {
         assertEquals(24772, repo.owner.id);
         assertEquals(null, repo.owner.email);
         assertEquals(null, repo.owner.location);
+    }
+
+    @Test
+    public void testToObjectArray() throws Exception {
+        String src = "\"list\":[1,2,3,4,5,6]";
+
+        JsonParser<ArrayTest> parser = new JsonParser<>();
+
+        ArrayTest arr = parser.toObject(src, ArrayTest.class);
     }
 }

@@ -1,7 +1,5 @@
 package isel.mpd.jsonzai.utils;
 
-import java.lang.reflect.Array;
-
 public class TypeUtils {
 
     public static boolean isPrimitive(Class<?> type) {
@@ -20,7 +18,8 @@ public class TypeUtils {
     }
 
     public static boolean isArray(Class<?> type) {
-        return type.isAssignableFrom(Array.class);
+        //return type.isAssignableFrom(Array.class);
+        return type.getName().charAt(0) == '[';
     }
 
     public static boolean isString(Class<?> type) {
