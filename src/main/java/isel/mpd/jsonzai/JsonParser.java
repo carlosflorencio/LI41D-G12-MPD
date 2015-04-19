@@ -15,7 +15,7 @@ public class JsonParser<T> {
 
     private TypeFactoryInterface factory;
 
-    public JsonParser(){
+    public JsonParser() {
         factory = new TypeFactoryJson();
     }
 
@@ -32,7 +32,8 @@ public class JsonParser<T> {
      * @throws InstantiationException
      */
     @SuppressWarnings("unchecked")
-    public <T> T toObject(String json, Class<T> dest) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+    public <T> T toObject(String json,
+                          Class<T> dest) throws IllegalAccessException, InvocationTargetException, InstantiationException {
         T obj = (T) dest.getConstructors()[0].newInstance();
         Field[] fields = obj.getClass().getDeclaredFields();
 
@@ -41,26 +42,11 @@ public class JsonParser<T> {
             Class<?> type = field.getType();
             int initialIndex = JsonUtils.getBeginIndexOfValue(json, nameOfField);
 
-            if(initialIndex == -1) { //no key in json
+            if (initialIndex == -1) { //no key in json, the field should stay with the default value
                 continue;
             }
 
-            Object resultValue;
-            String value;
-
-            if (TypeUtils.isPrimitive(type)) {
-                value = JsonUtils.getValue(json, initialIndex);
-                resultValue = createValue(type, value);
-            } else if (TypeUtils.isString(type)) {
-                value = JsonUtils.getValue(json, initialIndex);
-                resultValue = createValue(type, value);
-            } else if (TypeUtils.isArray(type)) {
-                value = JsonUtils.getObject(json, initialIndex, '[', ']');
-                resultValue = toList(value, field.getClass().getComponentType()).toArray();
-            } else {
-                value = JsonUtils.getObject(json, initialIndex, '{', '}');
-                resultValue = toObject(value, type);
-            }
+            Object resultValue = getObjectFromJsonValue(json, field, type, initialIndex);
 
             field.set(obj, resultValue);
         }
@@ -81,7 +67,8 @@ public class JsonParser<T> {
      * @throws InstantiationException
      * @throws InvocationTargetException
      */
-    public <T> List<T> toList(String src, Class<T> dest) throws IllegalAccessException, InstantiationException, InvocationTargetException {
+    public <T> List<T> toList(String src,
+                              Class<T> dest) throws IllegalAccessException, InstantiationException, InvocationTargetException {
         List<T> list = new LinkedList<>();
 
         int i = 1;
@@ -98,6 +85,7 @@ public class JsonParser<T> {
 
     /**
      * Create the value type or null if we dont know how to make it
+     *
      * @param type
      * @param value
      * @return
@@ -109,6 +97,38 @@ public class JsonParser<T> {
         } catch (TypeCreatorNotFound typeCreatorNotFound) {
             return null;
         }
+    }
+
+    /**
+     * Where the magic happens, translate a String value in json to a Java object
+     *
+     * @param json
+     * @param field
+     * @param type
+     * @param initialIndex
+     * @return
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     * @throws InvocationTargetException
+     */
+    private Object getObjectFromJsonValue(String json, Field field, Class<?> type, int initialIndex)
+            throws IllegalAccessException, InstantiationException, InvocationTargetException {
+        String value;
+        Object resultValue;
+        if (TypeUtils.isPrimitive(type)) {
+            value = JsonUtils.getValue(json, initialIndex);
+            resultValue = createValue(type, value);
+        } else if (TypeUtils.isString(type)) {
+            value = JsonUtils.getValue(json, initialIndex);
+            resultValue = createValue(type, value);
+        } else if (TypeUtils.isArray(type)) {
+            value = JsonUtils.getObject(json, initialIndex, '[', ']');
+            resultValue = toList(value, field.getClass().getComponentType()).toArray();
+        } else { //must be an Object
+            value = JsonUtils.getObject(json, initialIndex, '{', '}');
+            resultValue = toObject(value, type);
+        }
+        return resultValue;
     }
 
 }
