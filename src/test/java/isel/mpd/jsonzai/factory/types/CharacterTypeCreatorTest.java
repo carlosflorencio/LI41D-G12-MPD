@@ -7,9 +7,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Created by Nuno on 14/04/2015.
- */
 public class CharacterTypeCreatorTest {
 
     private static String value;
@@ -22,12 +19,6 @@ public class CharacterTypeCreatorTest {
         wrongValue = "\"Ola\"";
 
         creator = new CharacterTypeCreator();
-    }
-
-    @Test
-    public void characterTypeCreatorMethodMatchTest() {
-        assertTrue(creator.test(value));
-        assertFalse(creator.test(wrongValue));
     }
 
     @Test

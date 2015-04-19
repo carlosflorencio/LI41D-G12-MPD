@@ -1,21 +1,10 @@
 package isel.mpd.jsonzai.factory.types;
 
-import isel.mpd.jsonzai.factory.TypeCreator;
 
-/**
- * Created by Nuno on 09/04/2015.
- */
-public class IntegerTypeCreator extends TypeCreator<String, Integer> {
+import isel.mpd.jsonzai.factory.TypeCreatorInterface;
 
-    @Override
-    public boolean test(String value) {
-        try {
-            Integer.parseInt(value);
-            return true;
-        } catch (NumberFormatException e){
-            return false;
-        }
-    }
+public class IntegerTypeCreator implements TypeCreatorInterface<String, Integer> {
+
 
     @Override
     public Integer apply(String s) {

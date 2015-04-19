@@ -1,20 +1,8 @@
 package isel.mpd.jsonzai.factory.types;
 
-import isel.mpd.jsonzai.factory.TypeCreator;
+import isel.mpd.jsonzai.factory.TypeCreatorInterface;
 
-/**
- * Created by Nuno on 14/04/2015.
- */
-public class FloatTypeCreator extends TypeCreator<String, Float> {
-    @Override
-    public boolean test(String value) {
-        try {
-            Float.parseFloat(value);
-            return true;
-        } catch (NumberFormatException e){
-            return false;
-        }
-    }
+public class FloatTypeCreator implements TypeCreatorInterface<String, Float> {
 
     @Override
     public Float apply(String s) {

@@ -1,9 +1,11 @@
 package isel.mpd.jsonzai;
 
+import isel.mpd.jsonzai.factory.TypeFactoryInterface;
 import isel.mpd.jsonzai.factory.TypeFactoryJson;
+import isel.mpd.jsonzai.factory.exceptions.TypeCreatorNotFound;
 import isel.mpd.jsonzai.utils.JsonUtils;
+import isel.mpd.jsonzai.utils.TypeUtils;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
@@ -11,50 +13,47 @@ import java.util.List;
 
 public class JsonParser<T> {
 
-    private static TypeFactoryJson typeFactoryJson;
+    private TypeFactoryInterface factory;
 
     public JsonParser(){
-        typeFactoryJson = new TypeFactoryJson();
+        factory = new TypeFactoryJson();
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T toObject(String src, Class<T> dest) throws IllegalAccessException, InvocationTargetException, InstantiationException {
-        String cleanedSrc = JsonUtils.clean(src);
+        String json = JsonUtils.clean(src); //minify the json
+
 
         T obj = (T) dest.getConstructors()[0].newInstance();
         Field[] fields = obj.getClass().getDeclaredFields();
 
         for (Field field : fields) {
             String nameOfField = field.getName().toLowerCase();
-            int initialIndex = JsonUtils.getBeginIndexOfValue(cleanedSrc, nameOfField);
+            Class<?> type = field.getType();
+            int initialIndex = JsonUtils.getBeginIndexOfValue(json, nameOfField);
 
             if(initialIndex == -1) { //no key in json
                 continue;
             }
 
-            int finalIdx;
+            Object resultValue;
+            String value;
 
-            if(isPrimitive(field.getType())){
-                finalIdx = cleanedSrc.indexOf(",", initialIndex);
-                String value = cleanedSrc.substring(initialIndex, finalIdx);
-
-                field.set(obj, typeFactoryJson.getCreator(value).apply(value));
-            }
-            else if(field.getType().isAssignableFrom(String.class)) {
-                finalIdx = cleanedSrc.indexOf("\",", initialIndex) + 1;
-                String value = cleanedSrc.substring(initialIndex, finalIdx);
-
-                field.set(obj, typeFactoryJson.getCreator(value).apply(value));
-
-            } else if(field.getType().isAssignableFrom(Array.class)){
-                //TODO: ...
-                String value = JsonUtils.getObject(cleanedSrc, initialIndex, '[', ']');
-                field.set(obj, toList(value, field.getClass().getComponentType()));
-
+            if (TypeUtils.isPrimitive(type)) {
+                value = json.substring(initialIndex, json.indexOf(",", initialIndex));
+                resultValue = createValue(type, value);
+            } else if (TypeUtils.isString(type)) {
+                value = json.substring(initialIndex, json.indexOf("\",", initialIndex) + 1);
+                resultValue = createValue(type, value);
+            } else if (TypeUtils.isArray(type)) {
+                value = JsonUtils.getObject(json, initialIndex, '[', ']');
+                resultValue = toList(value, field.getClass().getComponentType()).toArray();
             } else {
-                String value = JsonUtils.getObject(cleanedSrc, initialIndex, '{', '}');
-                field.set(obj, toObject(value, field.getType()));
-
+                value = JsonUtils.getObject(json, initialIndex, '{', '}');
+                resultValue = toObject(value, type);
             }
+
+            field.set(obj, resultValue);
         }
 
         return obj;
@@ -76,18 +75,19 @@ public class JsonParser<T> {
         return list;
     }
 
-    private static boolean isPrimitive(Class<?> type) {
-        return type.isAssignableFrom(Integer.class) ||
-                type.isAssignableFrom(int.class) ||
-                type.isAssignableFrom(Double.class) ||
-                type.isAssignableFrom(double.class) ||
-                type.isAssignableFrom(Boolean.class) ||
-                type.isAssignableFrom(boolean.class) ||
-                type.isAssignableFrom(Float.class) ||
-                type.isAssignableFrom(float.class) ||
-                type.isAssignableFrom(Long.class) ||
-                type.isAssignableFrom(long.class) ||
-                type.isAssignableFrom(Character.class) ||
-                type.isAssignableFrom(char.class);
+    /**
+     * Create the value type or null if we dont know how to make it
+     * @param type
+     * @param value
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    private Object createValue(Class<?> type, String value) {
+        try {
+            return this.factory.getCreator(type).apply(value);
+        } catch (TypeCreatorNotFound typeCreatorNotFound) {
+            return null;
+        }
     }
+
 }

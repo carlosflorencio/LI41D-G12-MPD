@@ -1,28 +1,41 @@
 package isel.mpd.jsonzai.factory;
 
+import isel.mpd.jsonzai.factory.exceptions.TypeCreatorNotFound;
 import isel.mpd.jsonzai.factory.types.*;
 
-public class TypeFactoryJson extends TypeFactoryBase<String> {
+import java.util.HashMap;
 
-    // ORDER MATTERS!
-    private TypeCreatorInterface[] types = {
-            new BooleanTypeCreator(),
-            new CharacterTypeCreator(),
-            new StringTypeCreator(),
-            new IntegerTypeCreator(),
-            new FloatTypeCreator(),
-            new DoubleTypeCreator(),
-            new LongTypeCreator()
-    };
+public class TypeFactoryJson<T> implements TypeFactoryInterface<Class<?>> {
+
+    private HashMap<Class<?>, TypeCreatorInterface> map = new HashMap<>();
+
+    public TypeFactoryJson() {
+        this.fillMap();
+    }
+
+    /**
+     * Fill the map with the type creators
+     */
+    private void fillMap() {
+        map.put(boolean.class, new BooleanTypeCreator());
+        map.put(char.class, new CharacterTypeCreator());
+        map.put(String.class, new StringTypeCreator());
+        map.put(int.class, new IntegerTypeCreator());
+        map.put(float.class, new FloatTypeCreator());
+        map.put(double.class, new DoubleTypeCreator());
+        map.put(long.class, new LongTypeCreator());
+    }
 
 
     @Override
-    public TypeCreatorInterface getCreator(String value) {
-        for (int i = 0; i < types.length; i++) {
-            if(types[i].test(value)){
-                return types[i];
-            }
+    public TypeCreatorInterface getCreator(Class<?> type) throws TypeCreatorNotFound {
+        TypeCreatorInterface res = map.get(type);
+
+        if (res == null) {
+            throw new TypeCreatorNotFound();
         }
-        throw new NoClassDefFoundError();
+
+        return res;
     }
+
 }

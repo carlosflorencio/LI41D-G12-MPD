@@ -1,16 +1,8 @@
 package isel.mpd.jsonzai.factory.types;
 
-import isel.mpd.jsonzai.factory.TypeCreator;
+import isel.mpd.jsonzai.factory.TypeCreatorInterface;
 
-/**
- * Created by Nuno on 09/04/2015.
- */
-public class BooleanTypeCreator extends TypeCreator<String, Boolean> {
-
-    @Override
-    public boolean test(String value) {
-        return value.equals("\"true\"") || value.equals("\"false\"");
-    }
+public class BooleanTypeCreator implements TypeCreatorInterface<String, Boolean> {
 
     @Override
     public Boolean apply(String s) {

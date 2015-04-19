@@ -9,9 +9,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Created by Nuno on 09/04/2015.
- */
 public class BooleanTypeCreatorTest {
 
     private static BooleanTypeCreator creator;
@@ -19,13 +16,6 @@ public class BooleanTypeCreatorTest {
     @BeforeClass
     public static void setUp(){
         creator = new BooleanTypeCreator();
-    }
-
-    @Test
-    public void booleanCreatorTypeMethodMatchTest(){
-        assertTrue(creator.test("\"true\""));
-        assertFalse(creator.test("\"truest\""));
-        assertFalse(creator.test("true\""));
     }
 
     @Test

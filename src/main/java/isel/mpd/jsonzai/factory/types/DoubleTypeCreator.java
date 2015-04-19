@@ -1,20 +1,11 @@
 package isel.mpd.jsonzai.factory.types;
 
-import isel.mpd.jsonzai.factory.TypeCreator;
+import isel.mpd.jsonzai.factory.TypeCreatorInterface;
 
 /**
  * Created by Nuno on 14/04/2015.
  */
-public class DoubleTypeCreator extends TypeCreator<String, Double> {
-    @Override
-    public boolean test(String value) {
-        try {
-            Double.parseDouble(value);
-            return true;
-        } catch (NumberFormatException e){
-            return false;
-        }
-    }
+public class DoubleTypeCreator implements TypeCreatorInterface<String, Double> {
 
     @Override
     public Double apply(String s) {
