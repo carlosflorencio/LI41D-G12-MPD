@@ -2,13 +2,14 @@ package isel.mpd.jsonzai;
 
 import isel.mpd.jsonzai.entities.GithubRepo;
 import isel.mpd.jsonzai.entities.GithubUser;
-import isel.mpd.jsonzai.utils.IOUtils;
-import isel.mpd.weather.data.HttpUrlStreamSupplier;
 import isel.mpd.weather.data.stringsuppliers.SimpleStringSupplierFromStream;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -51,5 +52,16 @@ public class JsonParserTest {
         List<GithubRepo> repos = parser.<GithubRepo>toList(repoJson, GithubRepo.class);
 
         assertEquals(30, repos.size());
+
+        GithubRepo repo = repos.get(0);
+
+        assertEquals(363183, repo.id);
+        assertEquals("achiu.github.com", repo.name);
+        assertEquals("achiu/achiu.github.com", repo.full_name);
+
+        assertEquals("achiu", repo.owner.login);
+        assertEquals(24772, repo.owner.id);
+        assertEquals(null, repo.owner.email);
+        assertEquals(null, repo.owner.location);
     }
 }

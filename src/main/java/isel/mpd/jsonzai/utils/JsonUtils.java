@@ -50,37 +50,22 @@ public class JsonUtils {
         return  res.substring(1, res.length() - 2);       // Remove first and last { }
     }
 
-    public static boolean isPrimitive(Class<?> type) {
-        return type.isAssignableFrom(Integer.class) ||
-                type.isAssignableFrom(int.class) ||
-                type.isAssignableFrom(Double.class) ||
-                type.isAssignableFrom(double.class) ||
-                type.isAssignableFrom(Boolean.class) ||
-                type.isAssignableFrom(boolean.class) ||
-                type.isAssignableFrom(Float.class) ||
-                type.isAssignableFrom(float.class) ||
-                type.isAssignableFrom(Long.class) ||
-                type.isAssignableFrom(long.class) ||
-                type.isAssignableFrom(Character.class) ||
-                type.isAssignableFrom(char.class);
-    }
-
     /**
-     * Get an nested object from a json string
      *
      * @param json
-     * @param field
+     * @param beginIndex
+     * @param initialJsonSpec
+     * @param finalJsonSpec
      * @return
      */
-    public static String getObject(String json, int beginIndex) {
-        int numberOfBrackets = 1;
-        int i;
-        for (i = beginIndex+1; numberOfBrackets != 0; i++) {
+    public static String getObject(String json, int beginIndex, char initialJsonSpec, char finalJsonSpec) {
+        int i, numberOfBrackets;
+        for (i = beginIndex+1, numberOfBrackets = 1; numberOfBrackets > 0; i++) {
             char c = json.charAt(i);
-            if(c == '{'){
+            if(c == initialJsonSpec){
                 numberOfBrackets++;
             }
-            else if(c == '}'){
+            else if(c == finalJsonSpec){
                 numberOfBrackets--;
             }
         }

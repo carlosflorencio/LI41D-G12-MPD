@@ -3,6 +3,7 @@ package isel.mpd.jsonzai;
 import isel.mpd.jsonzai.factory.TypeFactoryJson;
 import isel.mpd.jsonzai.utils.JsonUtils;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
@@ -17,14 +18,14 @@ public class JsonParser<T> {
     }
 
     public <T> T toObject(String src, Class<T> dest) throws IllegalAccessException, InvocationTargetException, InstantiationException {
-        src = JsonUtils.clean(src);
+        String cleanedSrc = JsonUtils.clean(src);
 
         T obj = (T) dest.getConstructors()[0].newInstance();
         Field[] fields = obj.getClass().getDeclaredFields();
 
         for (Field field : fields) {
             String nameOfField = field.getName().toLowerCase();
-            int initialIndex = JsonUtils.getBeginIndexOfValue(src, nameOfField);
+            int initialIndex = JsonUtils.getBeginIndexOfValue(cleanedSrc, nameOfField);
 
             if(initialIndex == -1) { //no key in json
                 continue;
@@ -32,20 +33,27 @@ public class JsonParser<T> {
 
             int finalIdx;
 
-            if(JsonUtils.isPrimitive(field.getType())){
-                finalIdx = src.indexOf(",", initialIndex);
-                String value = src.substring(initialIndex, finalIdx);
+            if(isPrimitive(field.getType())){
+                finalIdx = cleanedSrc.indexOf(",", initialIndex);
+                String value = cleanedSrc.substring(initialIndex, finalIdx);
 
                 field.set(obj, typeFactoryJson.getCreator(value).apply(value));
             }
-            else if(field.getType().isAssignableFrom(String.class)){
-                finalIdx = src.indexOf("\",", initialIndex) + 1;
-                String value = src.substring(initialIndex, finalIdx);
+            else if(field.getType().isAssignableFrom(String.class)) {
+                finalIdx = cleanedSrc.indexOf("\",", initialIndex) + 1;
+                String value = cleanedSrc.substring(initialIndex, finalIdx);
 
                 field.set(obj, typeFactoryJson.getCreator(value).apply(value));
+
+            } else if(field.getType().isAssignableFrom(Array.class)){
+                //TODO: ...
+                String value = JsonUtils.getObject(cleanedSrc, initialIndex, '[', ']');
+                field.set(obj, toList(value, field.getClass().getComponentType()));
+
             } else {
-                String value = JsonUtils.getObject(src, initialIndex);
+                String value = JsonUtils.getObject(cleanedSrc, initialIndex, '{', '}');
                 field.set(obj, toObject(value, field.getType()));
+
             }
         }
 
@@ -58,7 +66,7 @@ public class JsonParser<T> {
 
         int i = 1;
         while (i < src.length()) {
-            String strObj = JsonUtils.getObject(src, i);
+            String strObj = JsonUtils.getObject(src, i, '{', '}');
             T obj = toObject(strObj, dest);
 
             list.add(obj);
@@ -66,5 +74,20 @@ public class JsonParser<T> {
             i += strObj.length() + 1;
         }
         return list;
+    }
+
+    private static boolean isPrimitive(Class<?> type) {
+        return type.isAssignableFrom(Integer.class) ||
+                type.isAssignableFrom(int.class) ||
+                type.isAssignableFrom(Double.class) ||
+                type.isAssignableFrom(double.class) ||
+                type.isAssignableFrom(Boolean.class) ||
+                type.isAssignableFrom(boolean.class) ||
+                type.isAssignableFrom(Float.class) ||
+                type.isAssignableFrom(float.class) ||
+                type.isAssignableFrom(Long.class) ||
+                type.isAssignableFrom(long.class) ||
+                type.isAssignableFrom(Character.class) ||
+                type.isAssignableFrom(char.class);
     }
 }

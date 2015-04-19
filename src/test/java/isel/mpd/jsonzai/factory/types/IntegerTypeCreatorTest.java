@@ -1,5 +1,6 @@
 package isel.mpd.jsonzai.factory.types;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
@@ -11,15 +12,28 @@ import static org.junit.Assert.assertThat;
  */
 public class IntegerTypeCreatorTest {
 
+    private static IntegerTypeCreator creator;
+
+    @BeforeClass
+    public static void setUp(){
+        creator = new IntegerTypeCreator();
+    }
+
     @Test
-    public void IntegerTypeCreatorMethodsTest(){
-        IntegerTypeCreator itc = new IntegerTypeCreator();
+    public void IntegerTypeCreatorMethodMatchTest(){
 
-        assertThat(false, is(equalTo(itc.test("1.1"))));
-        assertThat(false, is(equalTo(itc.test("1,1"))));
-        assertThat(false, is(equalTo(itc.test("2015-12-12"))));
+        assertThat(false, is(equalTo(creator.test("1.1"))));
+        assertThat(false, is(equalTo(creator.test("1,1"))));
+        assertThat(false, is(equalTo(creator.test("2015-12-12"))));
 
-        assertThat(true, is(equalTo(itc.test("1897685"))));
+        assertThat(false, is(equalTo(creator.test(Long.MAX_VALUE+""))));
+        assertThat(true, is(equalTo(creator.test("1897685"))));
+    }
+
+    @Test
+    public void IntegerTypeCreatorMethodApplyTest(){
+        assertThat(1897685, is(equalTo(creator.apply("1897685"))));
+
     }
 
 }

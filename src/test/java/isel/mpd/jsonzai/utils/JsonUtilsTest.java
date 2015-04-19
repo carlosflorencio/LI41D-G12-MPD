@@ -81,7 +81,7 @@ public class JsonUtilsTest {
         String should = "{\"login\":\"achiu\",\"site_admin\":true,\"object\":{\"test\":\"oi\"}}";
         int index = JsonUtils.getBeginIndexOfValue(json, "owner");
 
-        assertEquals(should, JsonUtils.getObject(json, index));
+        assertEquals(should, JsonUtils.getObject(json, index, '{', '}'));
     }
 
     @Test

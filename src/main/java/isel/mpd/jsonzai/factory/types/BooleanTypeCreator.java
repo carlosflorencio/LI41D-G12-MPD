@@ -9,8 +9,7 @@ public class BooleanTypeCreator extends TypeCreator<String, Boolean> {
 
     @Override
     public boolean test(String value) {
-        // TODO: method
-        return false;
+        return value.equals("\"true\"") || value.equals("\"false\"");
     }
 
     @Override

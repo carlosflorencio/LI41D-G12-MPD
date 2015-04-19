@@ -1,5 +1,6 @@
 package isel.mpd.jsonzai.factory.types;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -11,16 +12,27 @@ import static org.junit.Assert.assertTrue;
  */
 public class CharacterTypeCreatorTest {
 
+    private static String value;
+    private static String wrongValue;
+    private static CharacterTypeCreator creator;
+
+    @BeforeClass
+    public static void setUp(){
+        value = "\"o\"";
+        wrongValue = "\"Ola\"";
+
+        creator = new CharacterTypeCreator();
+    }
+
     @Test
-    public void matchCharacterTest() {
-        String value = "\"o\"";
-        String wrongValue = "\"Ola\"";
+    public void characterTypeCreatorMethodMatchTest() {
+        assertTrue(creator.test(value));
+        assertFalse(creator.test(wrongValue));
+    }
 
-        CharacterTypeCreator ctc = new CharacterTypeCreator();
-
-        assertTrue(ctc.test(value));
-        assertEquals(new Character('o'), ctc.apply(value));
-        assertFalse(ctc.test(wrongValue));
+    @Test
+    public void characterTypeCreatorMethodApplyTest() {
+        assertEquals(new Character('o'), creator.apply(value));
     }
 
 }
