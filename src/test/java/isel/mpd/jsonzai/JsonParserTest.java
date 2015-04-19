@@ -18,6 +18,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class JsonParserTest {
 
@@ -54,7 +55,7 @@ public class JsonParserTest {
     public void testToListWithGivenReposExample() throws IOException, IllegalAccessException, InvocationTargetException, InstantiationException {
         JsonParser<GithubRepo> parser = new JsonParser<>();
 
-        String json = JsonUtils.clean(repoJson);
+        String json = JsonUtils.clean(repoJson); //sloooooowwwwww because the json is huge
         List<GithubRepo> repos = parser.<GithubRepo>toList(json, GithubRepo.class);
 
         assertEquals(30, repos.size());
@@ -75,10 +76,21 @@ public class JsonParserTest {
     public void testSimpleJsonWithWrapperPrimitiveTypes() throws Exception {
         JsonParser<SimpleJsonEntity> parser = new JsonParser<>();
 
-        SimpleJsonEntity obj = parser.<SimpleJsonEntity>toObject(simpleJsonPrimitiveTypes, SimpleJsonEntity.class);
+        String json = JsonUtils.clean(simpleJsonPrimitiveTypes);
+        SimpleJsonEntity obj = parser.<SimpleJsonEntity>toObject(json, SimpleJsonEntity.class);
 
         assertNotNull(obj);
         assertEquals("vString with \"inside quotes\", test", obj.kString);
+        assertEquals(2125, obj.kInt);
+        assertTrue(123145.523 == obj.kDouble);
+        assertTrue(215.31 == obj.kFloat);
+        assertEquals('C', obj.kChar);
+        assertTrue(12345678910L == obj.kLong);
+        assertTrue(15 == obj.kInteger);
+        assertTrue(234.21 == obj.kDoubleWrapper);
+        assertTrue(2145.312 == obj.kFloatWrapper);
+        assertTrue('D' == obj.kCharWrapper);
+        assertTrue(34643453123L == obj.kLongWrapper);
     }
 
     @Test
