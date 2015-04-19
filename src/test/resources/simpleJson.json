@@ -1,0 +1,13 @@
+{
+  "kString": "vString with \"inside quotes\", test",
+  "kInt": 2125,
+  "kDouble": 123145.523,
+  "kFloat": 215.31,
+  "kChar": "C",
+  "kLong": 12345678910,
+  "kInteger": 15,
+  "kDoubleWrapper": 234.21,
+  "kFloatWrapper": 2145.312,
+  "kCharWrapper": "D",
+  "kLongWrapper": 34643453123
+}

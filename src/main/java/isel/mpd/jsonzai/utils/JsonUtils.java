@@ -36,14 +36,17 @@ public class JsonUtils {
     }
 
     /**
-     * Clean and remove quotes from keys
-     *
+     * Get the value of a json by the index of the begin of the value
      * @param json
+     * @param initialIndex
      * @return
      */
-    public static String cleanObject(String json) {
-        String res = clean(json).replaceAll("\":", ":"); // quote between key and :value
-        return  res.substring(1, res.length() - 2);       // Remove first and last { }
+    public static String getValue(String json, int initialIndex) {
+        if(json.charAt(initialIndex) == '\"') { //string
+            return json.substring(initialIndex, json.indexOf("\",", initialIndex) + 1);
+        }
+
+        return json.substring(initialIndex, json.indexOf(",", initialIndex));
     }
 
     /**
@@ -76,7 +79,7 @@ public class JsonUtils {
      * @return
      */
     public static int getBeginIndexOfValue(String json, String key) {
-        int idx = json.indexOf(key);
+        int idx = json.toLowerCase().indexOf(key);
 
         return  idx < 0 ? -1 : idx + key.length() + 2; //quotes counts too
     }
@@ -165,4 +168,5 @@ public class JsonUtils {
 
         return sb.toString();
     }
+
 }

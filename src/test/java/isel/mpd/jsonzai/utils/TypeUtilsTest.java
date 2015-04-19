@@ -24,7 +24,8 @@ public class TypeUtilsTest {
 
     @Test
     public void testIsArray() throws Exception {
-        assertTrue(TypeUtils.isArray(Array.class));
+        int[] array = {1, 2};
+        assertTrue(TypeUtils.isArray(array.getClass()));
     }
 
     @Test

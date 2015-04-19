@@ -19,10 +19,20 @@ public class JsonParser<T> {
         factory = new TypeFactoryJson();
     }
 
+    /**
+     * Populate an object from a json object.
+     * Make sure json is minified first!
+     *
+     * @param json
+     * @param dest
+     * @param <T>
+     * @return
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     * @throws InstantiationException
+     */
     @SuppressWarnings("unchecked")
-    public <T> T toObject(String src, Class<T> dest) throws IllegalAccessException, InvocationTargetException, InstantiationException {
-        String json = JsonUtils.clean(src); //minify the json
-
+    public <T> T toObject(String json, Class<T> dest) throws IllegalAccessException, InvocationTargetException, InstantiationException {
         T obj = (T) dest.getConstructors()[0].newInstance();
         Field[] fields = obj.getClass().getDeclaredFields();
 
@@ -39,10 +49,10 @@ public class JsonParser<T> {
             String value;
 
             if (TypeUtils.isPrimitive(type)) {
-                value = json.substring(initialIndex, json.indexOf(",", initialIndex));
+                value = JsonUtils.getValue(json, initialIndex);
                 resultValue = createValue(type, value);
             } else if (TypeUtils.isString(type)) {
-                value = json.substring(initialIndex, json.indexOf("\",", initialIndex) + 1);
+                value = JsonUtils.getValue(json, initialIndex);
                 resultValue = createValue(type, value);
             } else if (TypeUtils.isArray(type)) {
                 value = JsonUtils.getObject(json, initialIndex, '[', ']');
@@ -59,8 +69,19 @@ public class JsonParser<T> {
     }
 
 
+    /**
+     * Generate a list from a json array.
+     * Make sure json is minified first!
+     *
+     * @param src
+     * @param dest
+     * @param <T>
+     * @return
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     * @throws InvocationTargetException
+     */
     public <T> List<T> toList(String src, Class<T> dest) throws IllegalAccessException, InstantiationException, InvocationTargetException {
-        String json = JsonUtils.clean(src); //minify the json
         List<T> list = new LinkedList<>();
 
         int i = 1;
