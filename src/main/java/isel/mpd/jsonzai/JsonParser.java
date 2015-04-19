@@ -23,7 +23,6 @@ public class JsonParser<T> {
     public <T> T toObject(String src, Class<T> dest) throws IllegalAccessException, InvocationTargetException, InstantiationException {
         String json = JsonUtils.clean(src); //minify the json
 
-
         T obj = (T) dest.getConstructors()[0].newInstance();
         Field[] fields = obj.getClass().getDeclaredFields();
 
@@ -61,6 +60,7 @@ public class JsonParser<T> {
 
 
     public <T> List<T> toList(String src, Class<T> dest) throws IllegalAccessException, InstantiationException, InvocationTargetException {
+        String json = JsonUtils.clean(src); //minify the json
         List<T> list = new LinkedList<>();
 
         int i = 1;
