@@ -91,4 +91,20 @@ public class JsonUtilsTest {
         assertEquals(6, JsonUtils.getBeginIndexOfValue(json, "id"));
         assertEquals('1', json.charAt(6));
     }
+
+    @Test
+    public void testGetValueFromIndexString() throws Exception {
+        String json = "{\"kString\":\"vString with \\\"inside quotes\\\", test\",\"num\":2}";
+
+        assertEquals("\"vString with \\\"inside quotes\\\", test\"", JsonUtils.getValue(json, 11));
+        assertEquals("2", JsonUtils.getValue(json, json.length() - 2));
+    }
+
+    @Test
+    public void testGetValueFromIndexStringLastValue() throws Exception {
+        String json = "{\"num\":2,\"kString\":\"vString with \\\"inside quotes\\\", test\"}";
+
+        assertEquals("\"vString with \\\"inside quotes\\\", test\"", JsonUtils.getValue(json, 19));
+        assertEquals("2", JsonUtils.getValue(json, 7));
+    }
 }

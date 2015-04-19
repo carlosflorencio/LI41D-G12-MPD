@@ -1,0 +1,23 @@
+{
+  "users": [
+    {
+      "name": "Carlos",
+      "age": 21
+    },
+    {
+      "name": "Nuno",
+      "age": 65
+    }
+  ],
+  "oneUser": [
+    {
+      "name": "Paulo",
+      "age": 99
+    }
+  ],
+  "single": {
+    "name": "Ricardo",
+    "age": 150
+  },
+  "status": "Not Gays"
+}

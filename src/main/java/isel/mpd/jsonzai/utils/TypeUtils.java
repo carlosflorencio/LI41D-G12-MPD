@@ -1,5 +1,7 @@
 package isel.mpd.jsonzai.utils;
 
+import java.util.List;
+
 public class TypeUtils {
 
     public static boolean isPrimitive(Class<?> type) {
@@ -18,5 +20,9 @@ public class TypeUtils {
 
     public static boolean isString(Class<?> type) {
         return type.isAssignableFrom(String.class);
+    }
+
+    public static boolean isList(Class<?> type) {
+        return type.isAssignableFrom(List.class);
     }
 }

@@ -8,6 +8,7 @@ import isel.mpd.jsonzai.utils.TypeUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -121,9 +122,11 @@ public class JsonParser<T> {
         } else if (TypeUtils.isString(type)) {
             value = JsonUtils.getValue(json, initialIndex);
             resultValue = createValue(type, value);
-        } else if (TypeUtils.isArray(type)) {
+        } else if (TypeUtils.isList(type)) {
             value = JsonUtils.getObject(json, initialIndex, '[', ']');
-            resultValue = toList(value, field.getClass().getComponentType()).toArray();
+            ParameterizedType listType = (ParameterizedType) field.getGenericType();
+            Class<?> t = (Class<?>) listType.getActualTypeArguments()[0];
+            resultValue = toList(value, t);
         } else { //must be an Object
             value = JsonUtils.getObject(json, initialIndex, '{', '}');
             resultValue = toObject(value, type);

@@ -42,11 +42,24 @@ public class JsonUtils {
      * @return
      */
     public static String getValue(String json, int initialIndex) {
-        if(json.charAt(initialIndex) == '\"') { //string
-            return json.substring(initialIndex, json.indexOf("\",", initialIndex) + 1);
+        if(json.charAt(initialIndex) == '"') { //String
+            char curr;
+            int i;
+            for (i=initialIndex+1; (curr = json.charAt(i)) != '"'; ++i) {
+                if(curr == '\\') { //skip escaped chars
+                    i++;
+                    continue;
+                }
+            }
+
+            return json.substring(initialIndex, i+1);
         }
 
-        return json.substring(initialIndex, json.indexOf(",", initialIndex));
+        if(json.indexOf(',', initialIndex) != -1) { //last ,
+            return json.substring(initialIndex, json.indexOf(',', initialIndex));
+        }
+
+        return json.substring(initialIndex, json.indexOf('}', initialIndex)); //end of json
     }
 
     /**
@@ -88,7 +101,7 @@ public class JsonUtils {
      * Minify Json, removes all whitespaces
      *
      * FROM: https://github.com/getify/JSON.minify
-     * @param json
+     * @param jsonString
      * @return
      */
     public static String clean(String jsonString) {

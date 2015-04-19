@@ -3,6 +3,7 @@ package isel.mpd.jsonzai.utils;
 import org.junit.Test;
 
 import java.lang.reflect.Array;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -31,5 +32,10 @@ public class TypeUtilsTest {
     @Test
     public void testIsString() throws Exception {
         assertTrue(TypeUtils.isString(String.class));
+    }
+
+    @Test
+    public void testIsList() throws Exception {
+        assertTrue(TypeUtils.isList(List.class));
     }
 }
