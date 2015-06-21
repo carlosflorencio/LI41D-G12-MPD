@@ -21,7 +21,7 @@ public class WeatherJson {
     private static void testGetUser() throws IllegalAccessException, InstantiationException, InvocationTargetException {
         HttpUrlStreamSupplier url = new HttpUrlStreamSupplier("https://api.github.com/users/achiu");
 
-        JsonParser<GithubUser> parser = new JsonParser<>();
+        JsonParser parser = new JsonParser();
 
         GithubUser user = parser.toObject(new SimpleStringSupplierFromStream(url).get(), GithubUser.class);
 
@@ -31,7 +31,7 @@ public class WeatherJson {
     private static void testGetUserRepos() throws IllegalAccessException, InstantiationException, InvocationTargetException {
         HttpUrlStreamSupplier url = new HttpUrlStreamSupplier("https://api.github.com/users/achiu/repos");
 
-        JsonParser<GithubRepo> parser = new JsonParser<>();
+        JsonParser parser = new JsonParser();
 
         List<GithubRepo> repos = parser.<GithubRepo>toList(new SimpleStringSupplierFromStream(url).get(), GithubRepo.class);
 

@@ -43,7 +43,7 @@ public class JsonParserTest {
 
     @Test
     public void testToObjectWithGivenUserExample() throws Exception {
-        JsonParser<GithubUser> parser = new JsonParser<>();
+        JsonParser parser = new JsonParser();
 
         String json = JsonUtils.clean(userJson);
         GithubUser user = parser.<GithubUser>toObject(json, GithubUser.class);
@@ -57,7 +57,7 @@ public class JsonParserTest {
 
     @Test
     public void testToListWithGivenReposExample() throws IOException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        JsonParser<GithubRepo> parser = new JsonParser<>();
+        JsonParser parser = new JsonParser();
 
         //we do not clean json because this json is huge and this process is slow, instead we have a minified json file
         List<GithubRepo> repos = parser.<GithubRepo>toList(repoJson, GithubRepo.class);
@@ -78,7 +78,7 @@ public class JsonParserTest {
 
     @Test
     public void testSimpleJsonWithWrapperPrimitiveTypes() throws Exception {
-        JsonParser<SimpleJsonEntity> parser = new JsonParser<>();
+        JsonParser parser = new JsonParser();
 
         String json = JsonUtils.clean(simpleJsonPrimitiveTypes);
         SimpleJsonEntity obj = parser.<SimpleJsonEntity>toObject(json, SimpleJsonEntity.class);
@@ -99,7 +99,7 @@ public class JsonParserTest {
 
     @Test
     public void testJsonWithObjectsArraysAndListsOfObjects() throws Exception {
-        JsonParser<SimpleJsonEntity> parser = new JsonParser<>();
+        JsonParser parser = new JsonParser();
 
         String json = JsonUtils.clean(objectsJson);
         JsonObjectsEntity obj = parser.<JsonObjectsEntity>toObject(json, JsonObjectsEntity.class);

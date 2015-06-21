@@ -12,7 +12,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.LinkedList;
 import java.util.List;
 
-public class JsonParser<T> {
+public class JsonParser {
 
     private TypeFactoryInterface factory;
 
@@ -23,10 +23,6 @@ public class JsonParser<T> {
     /**
      * Populate an object from a json object.
      * Make sure json is minified first!
-     *
-     * @param json
-     * @param dest
-     * @param <T>
      */
     @SuppressWarnings("unchecked")
     public <T> T toObject(String json, Class<T> dest) {
@@ -59,11 +55,6 @@ public class JsonParser<T> {
     /**
      * Generate a list from a json array.
      * Make sure json is minified first!
-     *
-     * @param src
-     * @param dest
-     * @param <T>
-     * @return
      */
     public <T> List<T> toList(String src, Class<T> dest) {
         List<T> list = new LinkedList<>();
@@ -82,10 +73,6 @@ public class JsonParser<T> {
 
     /**
      * Create the value type or null if we dont know how to make it
-     *
-     * @param type
-     * @param value
-     * @return
      */
     @SuppressWarnings("unchecked")
     private Object createValue(Class<?> type, String value) {
@@ -98,14 +85,6 @@ public class JsonParser<T> {
 
     /**
      * Where the magic happens, translate a String value in json to a Java object
-     *
-     * @param json
-     * @param field
-     * @param type
-     * @param initialIndex
-     * @return
-     * @throws IllegalAccessException
-     * @throws InvocationTargetException
      */
     private Object getObjectFromJsonValue(String json, Field field, Class<?> type, int initialIndex)
             throws IllegalAccessException, InvocationTargetException {
