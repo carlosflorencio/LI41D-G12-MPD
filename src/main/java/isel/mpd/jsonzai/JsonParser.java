@@ -27,32 +27,32 @@ public class JsonParser<T> {
      * @param json
      * @param dest
      * @param <T>
-     * @return
-     * @throws IllegalAccessException
-     * @throws InvocationTargetException
-     * @throws InstantiationException
      */
     @SuppressWarnings("unchecked")
-    public <T> T toObject(String json,
-                          Class<T> dest) throws IllegalAccessException, InvocationTargetException, InstantiationException {
-        T obj = (T) dest.getConstructors()[0].newInstance();
-        Field[] fields = obj.getClass().getDeclaredFields();
+    public <T> T toObject(String json, Class<T> dest) {
+        try {
+            T obj = (T) dest.getConstructors()[0].newInstance();
+            Field[] fields = obj.getClass().getDeclaredFields();
 
-        for (Field field : fields) {
-            String nameOfField = field.getName().toLowerCase();
-            Class<?> type = field.getType();
-            int initialIndex = JsonUtils.getBeginIndexOfValue(json, nameOfField);
+            for (Field field : fields) {
+                String nameOfField = field.getName().toLowerCase();
+                Class<?> type = field.getType();
+                int initialIndex = JsonUtils.getBeginIndexOfValue(json, nameOfField);
 
-            if (initialIndex == -1) { //no key in json, the field should stay with the default value
-                continue;
+                if (initialIndex == -1) { //no key in json, the field should stay with the default value
+                    continue;
+                }
+
+                Object resultValue = getObjectFromJsonValue(json, field, type, initialIndex);
+
+                field.set(obj, resultValue);
             }
 
-            Object resultValue = getObjectFromJsonValue(json, field, type, initialIndex);
-
-            field.set(obj, resultValue);
+            return obj;
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            // if we can't create the object
+            return null;
         }
-
-        return obj;
     }
 
 
@@ -64,17 +64,13 @@ public class JsonParser<T> {
      * @param dest
      * @param <T>
      * @return
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     * @throws InvocationTargetException
      */
-    public <T> List<T> toList(String src,
-                              Class<T> dest) throws IllegalAccessException, InstantiationException, InvocationTargetException {
+    public <T> List<T> toList(String src, Class<T> dest) {
         List<T> list = new LinkedList<>();
 
         int i = 1;
         while (i < src.length()) {
-            String strObj = JsonUtils.getObject(src, i, '{', '}');  //ArrayTests fails here
+            String strObj = JsonUtils.getObject(src, i, '{', '}');
             T obj = toObject(strObj, dest);
 
             list.add(obj);
@@ -109,11 +105,10 @@ public class JsonParser<T> {
      * @param initialIndex
      * @return
      * @throws IllegalAccessException
-     * @throws InstantiationException
      * @throws InvocationTargetException
      */
     private Object getObjectFromJsonValue(String json, Field field, Class<?> type, int initialIndex)
-            throws IllegalAccessException, InstantiationException, InvocationTargetException {
+            throws IllegalAccessException, InvocationTargetException {
         String value;
         Object resultValue;
         if (TypeUtils.isPrimitive(type)) {
