@@ -25,12 +25,16 @@ import java.util.stream.Stream;
  */
 public class GhUserDto {
 
-    public final int id;
-    public final String login;
-    public final String name;
-    public final String location;
-    public final String company;
-    public final String type;
+    public int id;
+    public String login;
+    public String name;
+    public String location;
+    public String company;
+    public String type;
+
+    public GhUserDto(){
+
+    }
 
     public GhUserDto(int id, String login, String name, String location, String company, String type) {
         this.id = id;

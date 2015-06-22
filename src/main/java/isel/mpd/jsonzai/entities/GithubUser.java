@@ -5,4 +5,8 @@ public class GithubUser {
     public int id;
     public String email;
     public String location;
+
+    public GithubUser(){
+
+    }
 }

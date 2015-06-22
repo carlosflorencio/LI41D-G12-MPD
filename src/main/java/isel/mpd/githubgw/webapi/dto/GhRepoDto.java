@@ -19,6 +19,7 @@ package isel.mpd.githubgw.webapi.dto;
 
 import isel.mpd.githubgw.model.IGhOrg;
 import isel.mpd.githubgw.model.IGhUser;
+import isel.mpd.githubgw.model.async.GhRepo;
 
 import java.util.stream.Stream;
 
@@ -27,14 +28,18 @@ import java.util.stream.Stream;
  */
 public class GhRepoDto {
 
-    public final int id;
-    public final String name;
-    public final String full_name;
-    public final String description;
-    public final int size;
-    public final int stargazers_count;
-    public final int watchers_count;
-    public final String language;
+    public int id;
+    public String name;
+    public String full_name;
+    public String description;
+    public int size;
+    public int stargazers_count;
+    public int watchers_count;
+    public String language;
+
+    public GhRepoDto(){
+
+    }
 
     public GhRepoDto(
             int id,

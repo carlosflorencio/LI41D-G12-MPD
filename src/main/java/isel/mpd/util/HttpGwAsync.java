@@ -50,6 +50,7 @@ public class HttpGwAsync implements AutoCloseable {
         final CompletableFuture<Response> promise = new CompletableFuture<>();
         AsyncHttpClient.BoundRequestBuilder request = asyncHttpClient.prepareGet(path);
         for (Pair<String, String> p : headers) request.addHeader(p.key, p.value);
+
         request.execute(asyncHandler(promise));
         nrOfRequests.incrementAndGet();
         return promise;

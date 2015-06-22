@@ -26,12 +26,12 @@ public class Program {
 
     public static void main(String [] args) throws Exception {
         try (GhApi gw = new GhApi()) {
-            gw.getUserInfo("github").thenAccept(System.out::println).join();
-            gw.getOrgRepos(9919).thenAccept(System.out::println).join();
-            gw.getOrgRepos(9919, 1).thenAccept(System.out::println).join();
+            //gw.getUserInfo("github").thenAccept(System.out::println).join();
+            //gw.getOrgRepos(9919).thenAccept(System.out::println).join();
+            //gw.getOrgRepos(9919, 1).thenAccept(System.out::println).join();
             gw.getRepoContributors("zendframework", "zf2").thenAccept(System.out::println).join();
-            gw.getRepoContributors("zendframework", "zf2", 1).thenAccept(System.out::println).join();
-            gw.getUserOrgs("Ocramius").thenAccept(System.out::println).join();
+            //gw.getRepoContributors("zendframework", "zf2", 1).thenAccept(System.out::println).join();
+            //gw.getUserOrgs("Ocramius").thenAccept(System.out::println).join();
         }
     }
 }
