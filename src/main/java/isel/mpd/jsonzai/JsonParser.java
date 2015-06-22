@@ -39,6 +39,8 @@ public class JsonParser {
                     continue;
                 }
 
+                char a = json.charAt(initialIndex);
+
                 Object resultValue = getObjectFromJsonValue(json, field, type, initialIndex);
 
                 field.set(obj, resultValue);

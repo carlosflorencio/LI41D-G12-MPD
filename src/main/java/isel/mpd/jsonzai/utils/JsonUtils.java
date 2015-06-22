@@ -95,9 +95,9 @@ public class JsonUtils {
      * @return
      */
     public static int getBeginIndexOfValue(String json, String key) {
-        int idx = json.toLowerCase().indexOf(key);
+        int idx = json.toLowerCase().indexOf('"' + key + '"');
 
-        return  idx < 0 ? -1 : idx + key.length() + 2; //quotes counts too
+        return  idx < 0 ? -1 : idx + key.length() + 3; //quotes counts too
     }
 
     /**
