@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.*;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
@@ -50,25 +51,20 @@ public class GhServiceAsync implements AutoCloseable {
 
     public CompletableFuture<IGhOrg> getOrg(String login) throws ExecutionException, InterruptedException {
         return this.gh.getOrg(login).thenApplyAsync((GhOrgDto dto) -> {
-            CompletableFuture<Stream<IGhRepo>> future = new CompletableFuture<>();
+            CompletableFuture<Stream<IGhRepo>> future = getRepos(dto.id);
             IGhOrg org = new GhOrg(dto, future);
             this.identities.put(org, new HashSet<>());
-
-            executor.submit(() -> {
-                try {
-                    future.complete(getRepos(org).get());
-                } catch (InterruptedException | ExecutionException e) {
-                    future.completeExceptionally(e);
-                }
-            });
 
             return org;
         });
     }
 
-    public CompletableFuture<Stream<IGhRepo>> getRepos(IGhOrg org) {
-        return this.gh.getOrgRepos(org.getId(), 1).thenApplyAsync((list) -> list.stream()
-                .map((dto) -> new GhRepo(dto, org, null)));
+    public CompletableFuture<Stream<IGhRepo>> getRepos(int id) {
+        return this.gh.getOrgRepos(id, 1).thenApplyAsync((list) -> list.stream()
+                .map((dto) -> {
+                    IGhOrg org = this.identities.keySet().stream().filter((o) -> o.getId() == id).findFirst().orElse(null);
+                    return new GhRepo(dto, org, null);
+                }));
     }
 
     private static Future<Stream<IGhUser>> getContributorsOfRepo(GhRepoDto s) {
