@@ -86,7 +86,7 @@ public class GhAsyncTest {
     @Test
     public void test_gh_async_service_count_repos() throws Exception {
         try (GhServiceAsync gh = new GhServiceAsync()) {
-            assertEquals(107, gh.getOrg("zendframework").get().getRepos().count());
+            assertEquals(109, gh.getOrg("zendframework").get().getRepos().count());
         }
     }
 

@@ -42,7 +42,7 @@ public class ContributorsLazyStream<IGhRepo> implements Iterable<IGhRepo> {
                 }
 
                 System.out.println(curr + " x= " + perPage * page);
-                if (curr +1 >= perPage * page) {
+                if (curr >= perPage * page) {
                     System.out.println("limit");
                     page++;
                     return fillList();
@@ -64,7 +64,8 @@ public class ContributorsLazyStream<IGhRepo> implements Iterable<IGhRepo> {
                                 .filter((k) -> k.getId() == id)
                                 .findFirst()
                                 .orElse(null);
-                        IGhRepo repo = (IGhRepo) new GhRepo(o, org, null);
+                        CompletableFuture future = service.gh.getRepoContributors(org.getLogin(), o.name);
+                        IGhRepo repo = (IGhRepo) new GhRepo(o, org, future);
                         list.add(repo);
                     });
 
