@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -80,10 +79,6 @@ public class GhServiceAsync implements AutoCloseable {
                     return new GhRepo(dto, org, null);
                 }));
      */
-
-    private static Future<Stream<IGhUser>> getContributorsOfRepo(GhRepoDto s) {
-        return null;
-    }
 
 
     @Override

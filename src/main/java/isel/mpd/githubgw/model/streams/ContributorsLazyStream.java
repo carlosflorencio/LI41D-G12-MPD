@@ -80,7 +80,8 @@ public class ContributorsLazyStream<IGhRepo> implements Iterable<IGhRepo> {
                                 .filter((k) -> k.getId() == id)
                                 .findFirst()
                                 .orElse(null);
-                        IGhRepo repo = (IGhRepo) new GhRepo(o, org, null);
+                        CompletableFuture future = service.gh.getRepoContributors(org.getLogin(), o.name);
+                        IGhRepo repo = (IGhRepo) new GhRepo(o, org, future);
                         list.add(repo);
                     });
                 } catch (InterruptedException | ExecutionException e) {
