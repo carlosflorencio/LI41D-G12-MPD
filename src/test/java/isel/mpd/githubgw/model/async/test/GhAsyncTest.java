@@ -156,7 +156,7 @@ public class GhAsyncTest {
 
                 org.get();
                 assertEquals(1, httpGw.getNrOfResponses());
-//                assertEquals(2, httpGw.getNrOfRequests());
+                assertEquals(2, httpGw.getNrOfRequests());
 
                 repos = org.get().getRepos().limit(32).collect(toList());
                 assertEquals(3, httpGw.getNrOfRequests());
