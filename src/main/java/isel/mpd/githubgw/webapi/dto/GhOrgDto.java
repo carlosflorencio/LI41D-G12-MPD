@@ -14,31 +14,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package isel.mpd.githubgw.webapi.dto;
 
 /**
  * Created by Miguel Gamboa on 05-06-2015.
  */
-public class GhUserDto {
+public class GhOrgDto {
 
     public int id;
     public String login;
     public String name;
     public String location;
-    public String company;
-    public String type;
 
-    public GhUserDto() {}
+    public GhOrgDto() {}
 
     @Override
     public String toString() {
-        return "GhUserDto{" +
+        return "GhOrgDto{" +
                 "id=" + id +
-                ", login='" + login + '\'' +
                 ", name='" + name + '\'' +
+                ", login='" + login + '\'' +
                 ", location='" + location + '\'' +
-                ", company='" + company + '\'' +
-                ", type='" + type + '\'' +
                 '}';
     }
 }

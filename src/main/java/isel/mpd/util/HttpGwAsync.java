@@ -52,6 +52,7 @@ public class HttpGwAsync implements AutoCloseable {
         for (Pair<String, String> p : headers) request.addHeader(p.key, p.value);
 
         request.execute(asyncHandler(promise));
+        System.out.println(path);
         nrOfRequests.incrementAndGet();
         return promise;
     }
@@ -64,6 +65,7 @@ public class HttpGwAsync implements AutoCloseable {
             public Response onCompleted(Response response) throws Exception {
                 nrOfResponses.incrementAndGet();
                 promise.complete(response);
+                System.out.println("response: " + response.getUri());
                 return response;
             }
         };

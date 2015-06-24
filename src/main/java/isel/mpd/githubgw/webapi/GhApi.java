@@ -17,6 +17,7 @@
 package isel.mpd.githubgw.webapi;
 
 import com.ning.http.client.Response;
+import isel.mpd.githubgw.webapi.dto.GhOrgDto;
 import isel.mpd.githubgw.webapi.dto.GhUserDto;
 import isel.mpd.githubgw.webapi.dto.GhRepoDto;
 import isel.mpd.jsonzai.JsonParser;
@@ -65,6 +66,11 @@ public class GhApi implements AutoCloseable{
         return httpGw.getDataAsync(uri, GH_HEADERS).thenApply(r -> jsonToObject(r, GhUserDto.class));
     }
 
+    public CompletableFuture<GhOrgDto> getOrg(String name){
+        String uri = GH_URI + "/orgs/" + name;
+        return httpGw.getDataAsync(uri, GH_HEADERS).thenApply(r -> jsonToObject(r, GhOrgDto.class));
+    }
+
     public CompletableFuture<List<GhRepoDto>> getOrgRepos(int id){
         return getOrgRepos(id, 1);
     }
@@ -72,6 +78,11 @@ public class GhApi implements AutoCloseable{
     public CompletableFuture<List<GhRepoDto>> getOrgRepos(int id, int page){
         String uri = GH_URI + "/organizations/" + id + "/repos?page=" + page;
         return httpGw.getDataAsync(uri, GH_HEADERS).thenApply(r -> jsonToList(r, GhRepoDto.class));
+    }
+
+    public CompletableFuture<GhRepoDto> getRepo(String owner, String name){
+        String uri = GH_URI + "/repos/" + owner + "/" + name;
+        return httpGw.getDataAsync(uri, GH_HEADERS).thenApply(r -> jsonToObject(r, GhRepoDto.class));
     }
 
     public CompletableFuture<List<GhUserDto>> getRepoContributors(String login, String repo){

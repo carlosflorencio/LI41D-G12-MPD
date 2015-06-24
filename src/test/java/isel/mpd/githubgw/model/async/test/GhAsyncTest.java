@@ -25,6 +25,7 @@ import isel.mpd.githubgw.webapi.GhApi;
 import isel.mpd.util.HttpGwAsync;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 import static java.util.stream.Collectors.toList;
@@ -113,5 +114,35 @@ public class GhAsyncTest {
                 assertEquals(3 + nrOfReqs, httpGw.getNrOfRequests());
             }
         }
+    }
+
+    @Test
+    public void test_gh_async_get_repos_from_org() throws Exception {
+
+        try(HttpGwAsync httpGw = new HttpGwAsync ()) {
+            try (GhServiceAsync gh = new GhServiceAsync(new GhApi(httpGw))) {
+                List<IGhRepo> repos = null;
+
+                CompletableFuture<IGhOrg> org = gh.getOrg("zendframework");
+
+                org.get();
+                assertEquals(1, httpGw.getNrOfRequests());
+                assertEquals(1, httpGw.getNrOfResponses());
+
+                repos = org.get().getRepos().limit(30).collect(toList());
+                assertEquals(2, httpGw.getNrOfRequests());
+                assertEquals(2, httpGw.getNrOfResponses());
+
+                assertEquals(30, repos.size());
+
+                //Assert Org name in Repos
+                repos.forEach((repo) -> assertEquals("Zend Framework", repo.getOwner().getName()));
+
+                repos = org.get().getRepos().limit(31).collect(toList());
+                assertEquals(3, httpGw.getNrOfRequests());
+                assertEquals(3, httpGw.getNrOfResponses());
+            }
+        }
+
     }
 }

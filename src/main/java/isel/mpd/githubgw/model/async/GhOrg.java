@@ -18,6 +18,7 @@ package isel.mpd.githubgw.model.async;
 
 import isel.mpd.githubgw.model.IGhOrg;
 import isel.mpd.githubgw.model.IGhRepo;
+import isel.mpd.githubgw.webapi.dto.GhOrgDto;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -45,6 +46,16 @@ public class GhOrg implements IGhOrg{
         this.login = login;
         this.name = name;
         this.location = location;
+        this.repos = repos;
+    }
+
+    public GhOrg(
+            GhOrgDto dto,
+            Future<Stream<IGhRepo>> repos) {
+        this.id = dto.id;
+        this.login = dto.login;
+        this.name = dto.name;
+        this.location = dto.location;
         this.repos = repos;
     }
 

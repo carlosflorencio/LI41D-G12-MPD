@@ -17,12 +17,6 @@
 
 package isel.mpd.githubgw.webapi.dto;
 
-import isel.mpd.githubgw.model.IGhOrg;
-import isel.mpd.githubgw.model.IGhUser;
-import isel.mpd.githubgw.model.async.GhRepo;
-
-import java.util.stream.Stream;
-
 /**
  * Created by Miguel Gamboa on 05-06-2015.
  */
@@ -37,29 +31,8 @@ public class GhRepoDto {
     public int watchers_count;
     public String language;
 
-    public GhRepoDto(){
+    public GhRepoDto() {}
 
-    }
-
-    public GhRepoDto(
-            int id,
-            String name,
-            String full_name,
-            String description,
-            int size,
-            int stargazers_count,
-            int watchers_count,
-            String language)
-    {
-        this.id = id;
-        this.name = name;
-        this.full_name = full_name;
-        this.description = description;
-        this.size = size;
-        this.stargazers_count = stargazers_count;
-        this.watchers_count = watchers_count;
-        this.language = language;
-    }
 
     @Override
     public String toString() {
