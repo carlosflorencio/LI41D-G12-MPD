@@ -52,8 +52,8 @@ public class HttpGwAsync implements AutoCloseable {
         for (Pair<String, String> p : headers) request.addHeader(p.key, p.value);
 
         request.execute(asyncHandler(promise));
-        System.out.println(path);
         nrOfRequests.incrementAndGet();
+        System.out.println(path);
         return promise;
     }
 

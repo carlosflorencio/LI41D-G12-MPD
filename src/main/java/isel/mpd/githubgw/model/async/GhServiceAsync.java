@@ -20,6 +20,7 @@ package isel.mpd.githubgw.model.async;
 import isel.mpd.githubgw.model.IGhOrg;
 import isel.mpd.githubgw.model.IGhRepo;
 import isel.mpd.githubgw.model.IGhUser;
+import isel.mpd.githubgw.model.streams.ContributorsLazyStream;
 import isel.mpd.githubgw.webapi.GhApi;
 import isel.mpd.githubgw.webapi.dto.GhOrgDto;
 import isel.mpd.githubgw.webapi.dto.GhRepoDto;
@@ -30,15 +31,15 @@ import java.util.Set;
 import java.util.concurrent.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Created by Miguel Gamboa on 08-06-2015.
  */
 public class GhServiceAsync implements AutoCloseable {
 
-    private final GhApi gh;
-    private HashMap<IGhOrg, Set<IGhUser>> identities;
-    private static ExecutorService executor = Executors.newFixedThreadPool(3);
+    public final GhApi gh;
+    public HashMap<IGhOrg, Set<IGhUser>> identities;
 
     public GhServiceAsync() {
         this(new GhApi());
@@ -51,8 +52,7 @@ public class GhServiceAsync implements AutoCloseable {
 
     public CompletableFuture<IGhOrg> getOrg(String login) throws ExecutionException, InterruptedException {
         return this.gh.getOrg(login).thenApplyAsync((GhOrgDto dto) -> {
-            CompletableFuture<Stream<IGhRepo>> future = getRepos(dto.id);
-            IGhOrg org = new GhOrg(dto, future);
+            IGhOrg org = new GhOrg(dto, getRepos(dto.id));
             this.identities.put(org, new HashSet<>());
 
             return org;
@@ -60,12 +60,23 @@ public class GhServiceAsync implements AutoCloseable {
     }
 
     public CompletableFuture<Stream<IGhRepo>> getRepos(int id) {
-        return this.gh.getOrgRepos(id, 1).thenApplyAsync((list) -> list.stream()
+        return CompletableFuture.supplyAsync(() -> {
+            Iterable<IGhRepo> i = new ContributorsLazyStream<>(this, id, gh.getOrgRepos(id));
+            return StreamSupport.stream((i.spliterator()), false);
+        });
+    }
+
+    /*
+    this.gh.getOrgRepos(id, 1).thenApplyAsync((list) -> list.stream()
                 .map((dto) -> {
-                    IGhOrg org = this.identities.keySet().stream().filter((o) -> o.getId() == id).findFirst().orElse(null);
+                    IGhOrg org = this.identities.keySet()
+                            .stream()
+                            .filter((o) -> o.getId() == id)
+                            .findFirst()
+                            .orElse(null);
                     return new GhRepo(dto, org, null);
                 }));
-    }
+     */
 
     private static Future<Stream<IGhUser>> getContributorsOfRepo(GhRepoDto s) {
         return null;
