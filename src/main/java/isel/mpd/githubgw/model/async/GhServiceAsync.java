@@ -25,12 +25,10 @@ import isel.mpd.githubgw.webapi.GhApi;
 import isel.mpd.githubgw.webapi.dto.GhOrgDto;
 import isel.mpd.githubgw.webapi.dto.GhRepoDto;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -40,7 +38,7 @@ import java.util.stream.StreamSupport;
 public class GhServiceAsync implements AutoCloseable {
 
     public final GhApi gh;
-    public HashMap<IGhOrg, Set<IGhUser>> identities;
+    public HashMap<Set<IGhUser>, IGhOrg> identities;
 
     public GhServiceAsync() {
         this(new GhApi());
@@ -54,7 +52,7 @@ public class GhServiceAsync implements AutoCloseable {
     public CompletableFuture<IGhOrg> getOrg(String login) throws ExecutionException, InterruptedException {
         return this.gh.getOrg(login).thenApplyAsync((GhOrgDto dto) -> {
             IGhOrg org = new GhOrg(dto, getRepos(dto.id));
-            this.identities.put(org, new HashSet<>());
+            this.identities.put(new TreeSet<>(), org);
 
             return org;
         });
@@ -91,4 +89,15 @@ public class GhServiceAsync implements AutoCloseable {
         return gh.isClosed();
     }
 
+    public CompletableFuture<Stream<IGhUser>> getRepoContributors(String login, String name, IGhOrg org) {
+        return this.gh.getRepoContributors(login, name)
+                .thenApply((list) -> list.stream().map((dto) -> {
+                    //Stream<IGhOrg> orgs = this.identities.entrySet().stream().filter((entry) -> entry.getValue().contains());
+                    IGhUser u = new GhUser(dto);
+                    this.identities.entrySet().stream().filter((e) -> e.getValue() == org).forEach((e) -> {
+                        e.getKey().add(u);
+                    }); //change to compareTo? e.getValue() == org
+                    return u;
+                }));
+    }
 }

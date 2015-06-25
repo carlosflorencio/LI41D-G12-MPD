@@ -19,36 +19,54 @@ package isel.mpd.githubgw.model.async;
 
 import isel.mpd.githubgw.model.IGhOrg;
 import isel.mpd.githubgw.model.IGhUser;
+import isel.mpd.githubgw.webapi.dto.GhUserDto;
 
 import java.util.stream.Stream;
 
 /**
  * Created by Miguel Gamboa on 08-06-2015.
  */
-public class GhUser implements IGhUser{
+public class GhUser implements IGhUser {
+
+    private final int id;
+    private final String login;
+    private final String name;
+    private final String company;
+    private Stream<IGhOrg> orgs;
+
+    public GhUser(GhUserDto dto) {
+        this.id = dto.id;
+        this.login = dto.login;
+        this.name = dto.name;
+        this.company = dto.company;
+    }
+
+    public void addOrgs(Stream<IGhOrg> o) {
+        this.orgs = o;
+    }
 
     @Override
     public int getId() {
-        throw new UnsupportedOperationException();
+        return this.id;
     }
 
     @Override
     public String getLogin() {
-        throw new UnsupportedOperationException();
+        return this.login;
     }
 
     @Override
     public String getName() {
-        throw new UnsupportedOperationException();
+        return this.name;
     }
 
     @Override
     public String getCompany() {
-        throw new UnsupportedOperationException();
+        return this.company;
     }
 
     @Override
     public Stream<IGhOrg> getOrgs() {
-        throw new UnsupportedOperationException();
+        return this.orgs;
     }
 }

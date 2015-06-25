@@ -22,6 +22,9 @@ import java.util.stream.Stream;
  * Created by Miguel Gamboa on 05-06-2015.
  */
 public interface IGhUser {
+
+    public void addOrgs(Stream<IGhOrg> o);
+
     public int getId();
 
     public String getLogin() ;

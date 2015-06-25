@@ -1,17 +1,19 @@
 package isel.mpd.githubgw.model.streams;
 
 import isel.mpd.githubgw.model.IGhOrg;
+import isel.mpd.githubgw.model.IGhRepo;
+import isel.mpd.githubgw.model.IGhUser;
 import isel.mpd.githubgw.model.async.GhRepo;
 import isel.mpd.githubgw.model.async.GhServiceAsync;
 import isel.mpd.githubgw.webapi.dto.GhRepoDto;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.stream.Stream;
 
-public class ContributorsLazyStream<IGhRepo> implements Iterable<IGhRepo> {
+public class ContributorsLazyStream<T> implements Iterable<IGhRepo> {
 
     private GhServiceAsync service;
     private int id;
@@ -58,16 +60,19 @@ public class ContributorsLazyStream<IGhRepo> implements Iterable<IGhRepo> {
 
             public boolean firstTime() {
                 int before = list.size();
-                    f.forEach(o -> {
-                        IGhOrg org = service.identities.keySet()
-                                .stream()
-                                .filter((k) -> k.getId() == id)
-                                .findFirst()
-                                .orElse(null);
-                        CompletableFuture future = service.gh.getRepoContributors(org.getLogin(), o.name);
-                        IGhRepo repo = (IGhRepo) new GhRepo(o, org, future);
-                        list.add(repo);
-                    });
+                f.forEach(o -> {
+                    IGhOrg org = service.identities.keySet()
+                            .stream()
+                            .filter((k) -> k.getId() == id)
+                            .findFirst()
+                            .orElse(null);
+                    CompletableFuture<Stream<IGhUser>> future = service.getRepoContributors(org.getLogin(),
+                                                                                            o.name,
+                                                                                            org);
+                    IGhRepo repo = new GhRepo(o, org, future);
+                    list.add(repo);
+
+                });
 
                 return list.size() != before;
             }
@@ -81,15 +86,43 @@ public class ContributorsLazyStream<IGhRepo> implements Iterable<IGhRepo> {
                                 .filter((k) -> k.getId() == id)
                                 .findFirst()
                                 .orElse(null);
-                        CompletableFuture future = service.gh.getRepoContributors(org.getLogin(), o.name);
-                        IGhRepo repo = (IGhRepo) new GhRepo(o, org, future);
+                        Future<Stream<IGhUser>> future = service.getRepoContributors(org.getLogin(), o.name, org);
+                        IGhRepo repo = new GhRepo(o, org, future);
                         list.add(repo);
+
+                        this.fillUsersOrgs();
+//                        repo.getContributors().forEach((u) -> {
+//                            Stream<IGhOrg> os = service.identities.entrySet()
+//                                    .stream()
+//                                    .filter((e) -> e.getValue().contains(u.getLogin()))
+//                                    .map(Map.Entry::getKey);
+//
+//                            u.addOrgs(os);
+//                        });
                     });
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
 
                 return list.size() != before;
+            }
+
+            private void fillUsersOrgs() {
+                service.identities.entrySet().forEach((e) -> {
+                    HashMap<IGhUser, List<IGhOrg>> map = new HashMap<IGhUser, List<IGhOrg>>();
+                    IGhOrg o = e.getKey();
+
+                    e.getValue().forEach((u) -> {
+                        List<IGhOrg> l = map.get(u);
+                        if(l.isEmpty()) {
+                            l.add(o);
+                            map.put(u, l);
+                        } else {
+                            map.get()
+                        }
+
+                    });
+                });
             }
         };
     }
