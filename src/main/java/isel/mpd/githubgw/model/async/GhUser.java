@@ -21,6 +21,7 @@ import isel.mpd.githubgw.model.IGhOrg;
 import isel.mpd.githubgw.model.IGhUser;
 import isel.mpd.githubgw.webapi.dto.GhUserDto;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 /**
@@ -32,7 +33,7 @@ public class GhUser implements IGhUser {
     private final String login;
     private final String name;
     private final String company;
-    private Stream<IGhOrg> orgs;
+    private List<IGhOrg> orgs;
 
     public GhUser(GhUserDto dto) {
         this.id = dto.id;
@@ -41,8 +42,8 @@ public class GhUser implements IGhUser {
         this.company = dto.company;
     }
 
-    public void addOrgs(Stream<IGhOrg> o) {
-        this.orgs = o;
+    public void addOrg(IGhOrg o) {
+        this.orgs.add(o);
     }
 
     @Override
@@ -67,6 +68,6 @@ public class GhUser implements IGhUser {
 
     @Override
     public Stream<IGhOrg> getOrgs() {
-        return this.orgs;
+        return this.orgs.stream();
     }
 }

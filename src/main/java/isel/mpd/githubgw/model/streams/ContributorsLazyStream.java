@@ -92,9 +92,9 @@ public class ContributorsLazyStream<T> implements Iterable<IGhRepo> {
                     e.printStackTrace();
                 }
 
-
                 return list.size() != before;
             }
+
 
         };
     }

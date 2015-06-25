@@ -23,7 +23,7 @@ import java.util.stream.Stream;
  */
 public interface IGhUser {
 
-    public void addOrgs(Stream<IGhOrg> o);
+    public void addOrg(IGhOrg o);
 
     public int getId();
 

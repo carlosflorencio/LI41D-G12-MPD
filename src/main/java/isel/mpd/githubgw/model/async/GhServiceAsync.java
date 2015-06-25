@@ -94,12 +94,7 @@ public class GhServiceAsync implements AutoCloseable {
                     s.add(org);
 
                     return u;
-                })).thenApply((l) -> {fillUsersOrgs(); return l;});
+                })).thenApply();
     }
 
-    private void fillUsersOrgs() {
-        this.identities.keySet().forEach((u) -> {
-            u.addOrgs(this.identities.get(u).stream());
-        });
-    }
 }
