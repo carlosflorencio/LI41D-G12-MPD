@@ -61,8 +61,7 @@ public class ContributorsLazyStream<T> implements Iterable<IGhRepo> {
             public boolean firstTime() {
                 int before = list.size();
                 f.forEach(o -> {
-                    IGhOrg org = service.identities.keySet()
-                            .stream()
+                    IGhOrg org = service.orgs.stream()
                             .filter((k) -> k.getId() == id)
                             .findFirst()
                             .orElse(null);
@@ -71,7 +70,6 @@ public class ContributorsLazyStream<T> implements Iterable<IGhRepo> {
                                                                                             org);
                     IGhRepo repo = new GhRepo(o, org, future);
                     list.add(repo);
-
                 });
 
                 return list.size() != before;
@@ -81,8 +79,7 @@ public class ContributorsLazyStream<T> implements Iterable<IGhRepo> {
                 int before = list.size();
                 try {
                     service.gh.getOrgRepos(id, page).get().forEach(o -> {
-                        IGhOrg org = service.identities.keySet()
-                                .stream()
+                        IGhOrg org = service.orgs.stream()
                                 .filter((k) -> k.getId() == id)
                                 .findFirst()
                                 .orElse(null);
@@ -90,40 +87,15 @@ public class ContributorsLazyStream<T> implements Iterable<IGhRepo> {
                         IGhRepo repo = new GhRepo(o, org, future);
                         list.add(repo);
 
-                        this.fillUsersOrgs();
-//                        repo.getContributors().forEach((u) -> {
-//                            Stream<IGhOrg> os = service.identities.entrySet()
-//                                    .stream()
-//                                    .filter((e) -> e.getValue().contains(u.getLogin()))
-//                                    .map(Map.Entry::getKey);
-//
-//                            u.addOrgs(os);
-//                        });
                     });
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
 
+
                 return list.size() != before;
             }
 
-            private void fillUsersOrgs() {
-                service.identities.entrySet().forEach((e) -> {
-                    HashMap<IGhUser, List<IGhOrg>> map = new HashMap<IGhUser, List<IGhOrg>>();
-                    IGhOrg o = e.getKey();
-
-                    e.getValue().forEach((u) -> {
-                        List<IGhOrg> l = map.get(u);
-                        if(l.isEmpty()) {
-                            l.add(o);
-                            map.put(u, l);
-                        } else {
-                            map.get()
-                        }
-
-                    });
-                });
-            }
         };
     }
 }

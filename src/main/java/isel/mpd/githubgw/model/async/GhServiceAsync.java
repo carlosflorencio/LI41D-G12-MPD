@@ -24,6 +24,7 @@ import isel.mpd.githubgw.model.streams.ContributorsLazyStream;
 import isel.mpd.githubgw.webapi.GhApi;
 import isel.mpd.githubgw.webapi.dto.GhOrgDto;
 import isel.mpd.githubgw.webapi.dto.GhRepoDto;
+import sun.reflect.generics.tree.Tree;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -38,7 +39,8 @@ import java.util.stream.StreamSupport;
 public class GhServiceAsync implements AutoCloseable {
 
     public final GhApi gh;
-    public HashMap<Set<IGhUser>, IGhOrg> identities;
+    public HashMap<IGhUser, Set<IGhOrg>> identities;
+    public Set<IGhOrg> orgs;
 
     public GhServiceAsync() {
         this(new GhApi());
@@ -46,13 +48,14 @@ public class GhServiceAsync implements AutoCloseable {
 
     public GhServiceAsync(GhApi ghApi) {
         this.gh = ghApi;
+        this.orgs = new TreeSet<>((o, o1) -> o.getId() - o1.getId());
         this.identities = new HashMap<>();
     }
 
     public CompletableFuture<IGhOrg> getOrg(String login) throws ExecutionException, InterruptedException {
         return this.gh.getOrg(login).thenApplyAsync((GhOrgDto dto) -> {
             IGhOrg org = new GhOrg(dto, getRepos(dto.id));
-            this.identities.put(new TreeSet<>(), org);
+            this.orgs.add(org);
 
             return org;
         });
@@ -65,18 +68,6 @@ public class GhServiceAsync implements AutoCloseable {
             return StreamSupport.stream((i.spliterator()), false);
         });
     }
-
-    /*
-    this.gh.getOrgRepos(id, 1).thenApplyAsync((list) -> list.stream()
-                .map((dto) -> {
-                    IGhOrg org = this.identities.keySet()
-                            .stream()
-                            .filter((o) -> o.getId() == id)
-                            .findFirst()
-                            .orElse(null);
-                    return new GhRepo(dto, org, null);
-                }));
-     */
 
 
     @Override
@@ -92,12 +83,23 @@ public class GhServiceAsync implements AutoCloseable {
     public CompletableFuture<Stream<IGhUser>> getRepoContributors(String login, String name, IGhOrg org) {
         return this.gh.getRepoContributors(login, name)
                 .thenApply((list) -> list.stream().map((dto) -> {
-                    //Stream<IGhOrg> orgs = this.identities.entrySet().stream().filter((entry) -> entry.getValue().contains());
+
                     IGhUser u = new GhUser(dto);
-                    this.identities.entrySet().stream().filter((e) -> e.getValue() == org).forEach((e) -> {
-                        e.getKey().add(u);
-                    }); //change to compareTo? e.getValue() == org
+                    Set<IGhOrg> s = null;
+
+                    if ((s = this.identities.get(u)) == null) {
+                        s = new TreeSet<IGhOrg>((o, o1) -> o.getId() - o1.getId());
+                        this.identities.put(u, s);
+                    }
+                    s.add(org);
+
                     return u;
-                }));
+                })).thenApply((l) -> {fillUsersOrgs(); return l;});
+    }
+
+    private void fillUsersOrgs() {
+        this.identities.keySet().forEach((u) -> {
+            u.addOrgs(this.identities.get(u).stream());
+        });
     }
 }
