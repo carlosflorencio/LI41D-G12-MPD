@@ -21,6 +21,8 @@ import isel.mpd.githubgw.model.IGhOrg;
 import isel.mpd.githubgw.model.IGhUser;
 import isel.mpd.githubgw.webapi.dto.GhUserDto;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.stream.Stream;
 
 /**
@@ -32,17 +34,18 @@ public class GhUser implements IGhUser {
     private final String login;
     private final String name;
     private final String company;
-    private Stream<IGhOrg> orgs;
+    private Future<Stream<IGhOrg>> orgs;
 
-    public GhUser(GhUserDto dto) {
+    public GhUser(GhUserDto dto){
+        this(dto, null);
+    }
+
+    public GhUser(GhUserDto dto, Future<Stream<IGhOrg>> orgs) {
         this.id = dto.id;
         this.login = dto.login;
         this.name = dto.name;
         this.company = dto.company;
-    }
-
-    public void addOrgs(Stream<IGhOrg> o) {
-        this.orgs = o;
+        this.orgs = orgs;
     }
 
     @Override
@@ -67,6 +70,10 @@ public class GhUser implements IGhUser {
 
     @Override
     public Stream<IGhOrg> getOrgs() {
-        return this.orgs;
+        try {
+            return orgs.get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

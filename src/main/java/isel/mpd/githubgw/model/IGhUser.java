@@ -23,8 +23,6 @@ import java.util.stream.Stream;
  */
 public interface IGhUser {
 
-    public void addOrgs(Stream<IGhOrg> o);
-
     public int getId();
 
     public String getLogin() ;

@@ -24,12 +24,13 @@ import isel.mpd.githubgw.model.streams.ContributorsLazyStream;
 import isel.mpd.githubgw.webapi.GhApi;
 import isel.mpd.githubgw.webapi.dto.GhOrgDto;
 import isel.mpd.githubgw.webapi.dto.GhRepoDto;
-import sun.reflect.generics.tree.Tree;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -84,22 +85,35 @@ public class GhServiceAsync implements AutoCloseable {
         return this.gh.getRepoContributors(login, name)
                 .thenApply((list) -> list.stream().map((dto) -> {
 
-                    IGhUser u = new GhUser(dto);
+                    CompletableFuture<Stream<IGhOrg>> future = gh.getUserOrgs(dto.login)
+                            .thenApply((listOrgsDto) -> listOrgsDto.stream()
+                                    .map((dtoAux) -> {
+                                        IGhOrg organization = null;
+                                        if ((organization = containsOrg(dtoAux)) != null) {
+                                            return organization;
+                                        } else {
+                                            return new GhOrg(dtoAux, this.getRepos(dtoAux.id));
+                                        }
+                                    }));
+                    IGhUser u = new GhUser(dto, future);
                     Set<IGhOrg> s = null;
 
                     if ((s = this.identities.get(u)) == null) {
-                        s = new TreeSet<IGhOrg>((o, o1) -> o.getId() - o1.getId());
+                        s = new TreeSet<>((o, o1) -> o.getId() - o1.getId());
                         this.identities.put(u, s);
                     }
                     s.add(org);
 
                     return u;
-                })).thenApply((l) -> {fillUsersOrgs(); return l;});
+                }));
     }
 
-    private void fillUsersOrgs() {
-        this.identities.keySet().forEach((u) -> {
-            u.addOrgs(this.identities.get(u).stream());
-        });
+    private IGhOrg containsOrg(GhOrgDto dto1) {
+        for (IGhOrg org : orgs){
+            if(org.getId() == dto1.id){
+                return org;
+            }
+        }
+        return null;
     }
 }

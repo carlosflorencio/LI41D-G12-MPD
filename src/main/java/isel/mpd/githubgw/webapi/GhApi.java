@@ -18,14 +18,13 @@ package isel.mpd.githubgw.webapi;
 
 import com.ning.http.client.Response;
 import isel.mpd.githubgw.webapi.dto.GhOrgDto;
-import isel.mpd.githubgw.webapi.dto.GhUserDto;
 import isel.mpd.githubgw.webapi.dto.GhRepoDto;
+import isel.mpd.githubgw.webapi.dto.GhUserDto;
 import isel.mpd.jsonzai.JsonParser;
 import isel.mpd.util.HttpGwAsync;
 import isel.mpd.util.Pair;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -94,9 +93,9 @@ public class GhApi implements AutoCloseable{
         return httpGw.getDataAsync(uri, GH_HEADERS).thenApply(r -> jsonToList(r, GhUserDto.class));
     }
 
-    public CompletableFuture<List<GhUserDto>> getUserOrgs(String login){
+    public CompletableFuture<List<GhOrgDto>> getUserOrgs(String login){
         String uri = GH_URI + "/users/" + login + "/orgs";
-        return httpGw.getDataAsync(uri, GH_HEADERS).thenApply(r -> jsonToList(r, GhUserDto.class));
+        return httpGw.getDataAsync(uri, GH_HEADERS).thenApply(r -> jsonToList(r, GhOrgDto.class));
     }
 
     @Override
