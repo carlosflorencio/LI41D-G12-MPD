@@ -24,7 +24,7 @@ import isel.mpd.githubgw.webapi.GhApi;
  */
 public class Program {
 
-    public static void main(String [] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         try (GhApi gw = new GhApi()) {
             gw.getUserInfo("github").thenAccept(System.out::println).join();
             gw.getOrgRepos(9919).thenAccept(System.out::println).join();

@@ -18,19 +18,19 @@
 package isel.mpd.githubgw.webapi.dto;
 
 /**
- * Created by Miguel Gamboa on 05-06-2015.
+ * Helper class for a {@code GhOrg}
  */
 public class GhOrgDto {
 
     public int id;
+
     public String login;
+
     public String name;
+
     public String location;
 
-    public GhOrgDto() {}
-
-    public GhOrgDto(String login) {
-        this.login = login;
+    public GhOrgDto() {
     }
 
     @Override

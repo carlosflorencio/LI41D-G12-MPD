@@ -22,7 +22,7 @@ public class ContributorsLazyStream implements Iterable<IGhUser> {
     private IGhOrg orgObj;
     private int page;
 
-    public ContributorsLazyStream(GhServiceAsync api, IGhOrg orgObj, CompletableFuture<List<GhUserDto>> l){
+    public ContributorsLazyStream(GhServiceAsync api, IGhOrg orgObj, CompletableFuture<List<GhUserDto>> l) {
         this.service = api;
         this.orgObj = orgObj;
         this.page = 1;
@@ -41,7 +41,7 @@ public class ContributorsLazyStream implements Iterable<IGhUser> {
             @Override
             public boolean hasNext() {
                 try {
-                    if(curr >= PER_PAGE * page){
+                    if (curr >= PER_PAGE * page) {
                         list.addAll(service.gh.getRepoContributors(orgObj.getLogin(), orgObj.getName(), ++page).get());
                     }
                 } catch (InterruptedException | ExecutionException e) {
@@ -53,7 +53,7 @@ public class ContributorsLazyStream implements Iterable<IGhUser> {
 
             @Override
             public IGhUser next() {
-                if(hasNext()) {
+                if (hasNext()) {
                     GhUserDto dto = list.get(curr);
                     CompletableFuture<Stream<IGhOrg>> future = service.gh.getUserOrgs(dto.login)
                             .thenApply((listOrgsDto) -> listOrgsDto.stream()
@@ -81,8 +81,8 @@ public class ContributorsLazyStream implements Iterable<IGhUser> {
             }
 
             private IGhOrg containsOrg(GhOrgDto dto1) {
-                for (IGhOrg org : service.orgs){
-                    if(org.getLogin().equals(dto1.login)){
+                for (IGhOrg org : service.orgs) {
+                    if (org.getLogin().equals(dto1.login)) {
                         return org;
                     }
                 }

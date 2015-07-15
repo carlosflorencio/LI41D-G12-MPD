@@ -39,25 +39,26 @@ public class JsonUtils {
 
     /**
      * Get the value of a json by the index of the begin of the value
+     *
      * @param json
      * @param initialIndex
      * @return
      */
     public static String getValue(String json, int initialIndex) {
-        if(json.charAt(initialIndex) == '"') { //String
+        if (json.charAt(initialIndex) == '"') { //String
             char curr;
             int i;
-            for (i=initialIndex+1; (curr = json.charAt(i)) != '"'; ++i) {
-                if(curr == '\\') { //skip escaped chars
+            for (i = initialIndex + 1; (curr = json.charAt(i)) != '"'; ++i) {
+                if (curr == '\\') { //skip escaped chars
                     i++;
                     continue;
                 }
             }
 
-            return json.substring(initialIndex, i+1);
+            return json.substring(initialIndex, i + 1);
         }
 
-        if(json.indexOf(',', initialIndex) != -1) { //last ,
+        if (json.indexOf(',', initialIndex) != -1) { //last ,
             return json.substring(initialIndex, json.indexOf(',', initialIndex));
         }
 
@@ -65,7 +66,6 @@ public class JsonUtils {
     }
 
     /**
-     *
      * @param json
      * @param beginIndex
      * @param initialJsonSpec
@@ -73,13 +73,12 @@ public class JsonUtils {
      * @return
      */
     public static String getObject(String json, int beginIndex, char initialJsonSpec, char finalJsonSpec) {
-        int i = beginIndex +1, numberOfBrackets = 1;
+        int i = beginIndex + 1, numberOfBrackets = 1;
         while (numberOfBrackets > 0) {
             char c = json.charAt(i);
-            if(c == initialJsonSpec){
+            if (c == initialJsonSpec) {
                 numberOfBrackets++;
-            }
-            else if(c == finalJsonSpec){
+            } else if (c == finalJsonSpec) {
                 numberOfBrackets--;
             }
             i++;
@@ -90,6 +89,7 @@ public class JsonUtils {
 
     /**
      * Get the begin index of value by key
+     *
      * @param json
      * @param key
      * @return
@@ -97,13 +97,14 @@ public class JsonUtils {
     public static int getBeginIndexOfValue(String json, String key) {
         int idx = json.toLowerCase().indexOf('"' + key + '"');
 
-        return  idx < 0 ? -1 : idx + key.length() + 3; //quotes counts too
+        return idx < 0 ? -1 : idx + key.length() + 3; //quotes counts too
     }
 
     /**
      * Minify Json, removes all whitespaces
-     *
+     * <p>
      * FROM: https://github.com/getify/JSON.minify
+     *
      * @param jsonString
      * @return
      */
@@ -154,25 +155,15 @@ public class JsonUtils {
                 }
                 from--;
                 rc = jsonString.substring(from);
-            }
-            else
-            if (tmp.startsWith("/*") && !in_string && !in_multiline_comment && !in_singleline_comment) {
+            } else if (tmp.startsWith("/*") && !in_string && !in_multiline_comment && !in_singleline_comment) {
                 in_multiline_comment = true;
-            }
-            else
-            if (tmp.startsWith("*/") && !in_string && in_multiline_comment && !in_singleline_comment) {
+            } else if (tmp.startsWith("*/") && !in_string && in_multiline_comment && !in_singleline_comment) {
                 in_multiline_comment = false;
-            }
-            else
-            if (tmp.startsWith("//") && !in_string && !in_multiline_comment && !in_singleline_comment) {
+            } else if (tmp.startsWith("//") && !in_string && !in_multiline_comment && !in_singleline_comment) {
                 in_singleline_comment = true;
-            }
-            else
-            if ((tmp.startsWith("\n") || tmp.startsWith("\r")) && !in_string && !in_multiline_comment && in_singleline_comment) {
+            } else if ((tmp.startsWith("\n") || tmp.startsWith("\r")) && !in_string && !in_multiline_comment && in_singleline_comment) {
                 in_singleline_comment = false;
-            }
-            else
-            if (!in_multiline_comment && !in_singleline_comment && !tmp.substring(0, 1).matches("\\n|\\r|\\s")) {
+            } else if (!in_multiline_comment && !in_singleline_comment && !tmp.substring(0, 1).matches("\\n|\\r|\\s")) {
                 new_str.add(tmp);
             }
         }

@@ -18,20 +18,28 @@
 package isel.mpd.githubgw.webapi.dto;
 
 /**
- * Created by Miguel Gamboa on 05-06-2015.
+ * Helper class for a {@code GhRepo}
  */
 public class GhRepoDto {
 
     public int id;
+
     public String name;
+
     public String full_name;
+
     public String description;
+
     public int size;
+
     public int stargazers_count;
+
     public int watchers_count;
+
     public String language;
 
-    public GhRepoDto() {}
+    public GhRepoDto() {
+    }
 
 
     @Override

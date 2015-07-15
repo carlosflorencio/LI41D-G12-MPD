@@ -6,7 +6,7 @@ public class GithubUser {
     public String email;
     public String location;
 
-    public GithubUser(){
+    public GithubUser() {
 
     }
 }

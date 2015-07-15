@@ -17,6 +17,7 @@ class FileStreamSupplier implements Supplier<InputStream> {
 
     /**
      * Provides a file input stream, or {@code null} if some problem ocurrs.
+     *
      * @return the file input stream, or {@code null} if some problem ocurrs.
      */
     @Override

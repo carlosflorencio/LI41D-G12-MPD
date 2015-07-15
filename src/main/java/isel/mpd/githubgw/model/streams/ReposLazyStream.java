@@ -26,7 +26,7 @@ public class ReposLazyStream implements Iterable<IGhRepo> {
         cachedContributors = new HashMap<>();
     }
 
-    public ReposLazyStream(GhServiceAsync service, int id,Future<List<GhRepoDto>> l ){
+    public ReposLazyStream(GhServiceAsync service, int id, Future<List<GhRepoDto>> l) {
         this.service = service;
         this.id = id;
         this.page = 1;
@@ -46,7 +46,7 @@ public class ReposLazyStream implements Iterable<IGhRepo> {
             public boolean hasNext() {
                 System.out.println(curr + " x= " + PER_PAGE * page);
                 try {
-                    if(curr >= PER_PAGE * page){
+                    if (curr >= PER_PAGE * page) {
                         list.addAll(service.gh.getOrgRepos(id, ++page).get());
                     }
                 } catch (InterruptedException | ExecutionException e) {
@@ -58,7 +58,7 @@ public class ReposLazyStream implements Iterable<IGhRepo> {
 
             @Override
             public IGhRepo next() {
-                if(hasNext()) {
+                if (hasNext()) {
                     IGhOrg org = service.orgs.stream()
                             .filter(k -> k.getId() == id)
                             .findFirst()
@@ -66,8 +66,8 @@ public class ReposLazyStream implements Iterable<IGhRepo> {
 
                     String repoName = list.get(curr).name;
                     Future<Stream<IGhUser>> fUsers = cachedContributors.get(repoName);
-                    if(fUsers == null){
-                        fUsers = service.getRepoContributors(org.getLogin(),repoName,org);
+                    if (fUsers == null) {
+                        fUsers = service.getRepoContributors(org.getLogin(), repoName, org);
                         cachedContributors.put(repoName, fUsers);
                     }
 

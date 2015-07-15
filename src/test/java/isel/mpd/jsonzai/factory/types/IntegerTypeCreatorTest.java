@@ -12,12 +12,12 @@ public class IntegerTypeCreatorTest {
     private static IntegerTypeCreator creator;
 
     @BeforeClass
-    public static void setUp(){
+    public static void setUp() {
         creator = new IntegerTypeCreator();
     }
 
     @Test
-    public void IntegerTypeCreatorMethodApplyTest(){
+    public void IntegerTypeCreatorMethodApplyTest() {
         assertThat(1897685, is(equalTo(creator.apply("1897685"))));
     }
 
