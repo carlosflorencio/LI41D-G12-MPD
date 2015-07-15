@@ -20,10 +20,12 @@ package isel.mpd.githubgw.model.async;
 import isel.mpd.githubgw.model.IGhOrg;
 import isel.mpd.githubgw.model.IGhRepo;
 import isel.mpd.githubgw.model.IGhUser;
+import isel.mpd.githubgw.model.streams.ContributorsLazyStream;
 import isel.mpd.githubgw.model.streams.ReposLazyStream;
 import isel.mpd.githubgw.webapi.GhApi;
 import isel.mpd.githubgw.webapi.dto.GhOrgDto;
 import isel.mpd.githubgw.webapi.dto.GhRepoDto;
+import isel.mpd.githubgw.webapi.dto.GhUserDto;
 
 import java.util.HashMap;
 import java.util.List;
@@ -82,38 +84,11 @@ public class GhServiceAsync implements AutoCloseable {
     }
 
     public CompletableFuture<Stream<IGhUser>> getRepoContributors(String login, String name, IGhOrg org) {
-        return this.gh.getRepoContributors(login, name)
-                .thenApply((list) -> list.stream().map((dto) -> {
-
-                    CompletableFuture<Stream<IGhOrg>> future = gh.getUserOrgs(dto.login)
-                            .thenApply((listOrgsDto) -> listOrgsDto.stream()
-                                    .map((dtoAux) -> {
-                                        IGhOrg organization = null;
-                                        if ((organization = containsOrg(dtoAux)) != null) {
-                                            return organization;
-                                        } else {
-                                            return new GhOrg(dtoAux, this.getRepos(dtoAux.id));
-                                        }
-                                    }));
-                    IGhUser u = new GhUser(dto, future);
-                    Set<IGhOrg> s = null;
-
-                    if ((s = this.identities.get(u)) == null) {
-                        s = new TreeSet<>((o, o1) -> o.getId() - o1.getId());
-                        this.identities.put(u, s);
-                    }
-                    s.add(org);
-
-                    return u;
-                }));
+        CompletableFuture<List<GhUserDto>> future = this.gh.getRepoContributors(login, name, 1);
+        return CompletableFuture.supplyAsync(() -> {
+            Iterable<IGhUser> i = new ContributorsLazyStream(this, login, name, org, future);
+            return StreamSupport.stream((i.spliterator()), false);
+        });
     }
 
-    private IGhOrg containsOrg(GhOrgDto dto1) {
-        for (IGhOrg org : orgs){
-            if(org.getLogin().equals(dto1.login)){
-                return org;
-            }
-        }
-        return null;
-    }
 }

@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -35,6 +36,7 @@ public class GhOrg implements IGhOrg{
     public final String name;
     public final String location;
     public final Future<Stream<IGhRepo>> repos;
+    public List<IGhRepo> crepos;
 
     public List<IGhRepo> cache;
 
@@ -82,6 +84,7 @@ public class GhOrg implements IGhOrg{
     public Stream<IGhRepo> getRepos() {
         try {
             return repos.get();
+
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
