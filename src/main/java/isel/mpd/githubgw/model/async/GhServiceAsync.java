@@ -23,8 +23,10 @@ import isel.mpd.githubgw.model.IGhUser;
 import isel.mpd.githubgw.model.streams.ReposLazyStream;
 import isel.mpd.githubgw.webapi.GhApi;
 import isel.mpd.githubgw.webapi.dto.GhOrgDto;
+import isel.mpd.githubgw.webapi.dto.GhRepoDto;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
@@ -61,8 +63,11 @@ public class GhServiceAsync implements AutoCloseable {
     }
 
     public CompletableFuture<Stream<IGhRepo>> getRepos(int id) {
-        Iterable<IGhRepo> i = new ReposLazyStream(this, id);
-        return CompletableFuture.supplyAsync(() -> StreamSupport.stream((i.spliterator()), false));
+        CompletableFuture<List<GhRepoDto>> future = this.gh.getOrgRepos(id, 1);
+        return CompletableFuture.supplyAsync(() -> {
+            Iterable<IGhRepo> i = new ReposLazyStream(this, id, future);
+            return StreamSupport.stream((i.spliterator()), false);
+        });
     }
 
 

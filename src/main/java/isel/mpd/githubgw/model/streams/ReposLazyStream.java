@@ -10,6 +10,7 @@ import isel.mpd.githubgw.webapi.dto.GhRepoDto;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Stream;
@@ -23,12 +24,12 @@ public class ReposLazyStream implements Iterable<IGhRepo> {
     private int id;
     private int page;
 
-    public ReposLazyStream(GhServiceAsync api, int id){
+    public ReposLazyStream(GhServiceAsync api, int id,CompletableFuture<List<GhRepoDto>> l ){
         this.service = api;
         this.id = id;
         this.page = 1;
         try {
-            list = service.gh.getOrgRepos(id, page).get();
+            list = l.get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
