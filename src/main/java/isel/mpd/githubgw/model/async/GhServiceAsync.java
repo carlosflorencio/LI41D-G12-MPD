@@ -20,13 +20,11 @@ package isel.mpd.githubgw.model.async;
 import isel.mpd.githubgw.model.IGhOrg;
 import isel.mpd.githubgw.model.IGhRepo;
 import isel.mpd.githubgw.model.IGhUser;
-import isel.mpd.githubgw.model.streams.ContributorsLazyStream;
+import isel.mpd.githubgw.model.streams.ReposLazyStream;
 import isel.mpd.githubgw.webapi.GhApi;
 import isel.mpd.githubgw.webapi.dto.GhOrgDto;
-import isel.mpd.githubgw.webapi.dto.GhRepoDto;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
@@ -63,11 +61,8 @@ public class GhServiceAsync implements AutoCloseable {
     }
 
     public CompletableFuture<Stream<IGhRepo>> getRepos(int id) {
-        CompletableFuture<List<GhRepoDto>> future = gh.getOrgRepos(id);
-        return CompletableFuture.supplyAsync(() -> {
-            Iterable<IGhRepo> i = new ContributorsLazyStream<>(this, id, future);
-            return StreamSupport.stream((i.spliterator()), false);
-        });
+        Iterable<IGhRepo> i = new ReposLazyStream(this, id);
+        return CompletableFuture.supplyAsync(() -> StreamSupport.stream((i.spliterator()), false));
     }
 
 
@@ -110,7 +105,7 @@ public class GhServiceAsync implements AutoCloseable {
 
     private IGhOrg containsOrg(GhOrgDto dto1) {
         for (IGhOrg org : orgs){
-            if(org.getId() == dto1.id){
+            if(org.getLogin().equals(dto1.login)){
                 return org;
             }
         }

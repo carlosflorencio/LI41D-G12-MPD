@@ -20,9 +20,10 @@ import isel.mpd.githubgw.model.IGhOrg;
 import isel.mpd.githubgw.model.IGhRepo;
 import isel.mpd.githubgw.webapi.dto.GhOrgDto;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -35,6 +36,7 @@ public class GhOrg implements IGhOrg{
     public final String location;
     public final Future<Stream<IGhRepo>> repos;
 
+    public List<IGhRepo> cache;
 
     public GhOrg(
             int id,
@@ -46,17 +48,14 @@ public class GhOrg implements IGhOrg{
         this.login = login;
         this.name = name;
         this.location = location;
+        this.cache = new LinkedList<>();
         this.repos = repos;
     }
 
     public GhOrg(
             GhOrgDto dto,
             Future<Stream<IGhRepo>> repos) {
-        this.id = dto.id;
-        this.login = dto.login;
-        this.name = dto.name;
-        this.location = dto.location;
-        this.repos = repos;
+        this(dto.id, dto.login, dto.name, dto.location, repos);
     }
 
     @Override

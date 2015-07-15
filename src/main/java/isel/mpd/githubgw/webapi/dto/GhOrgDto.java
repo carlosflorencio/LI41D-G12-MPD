@@ -29,6 +29,10 @@ public class GhOrgDto {
 
     public GhOrgDto() {}
 
+    public GhOrgDto(String login) {
+        this.login = login;
+    }
+
     @Override
     public String toString() {
         return "GhOrgDto{" +

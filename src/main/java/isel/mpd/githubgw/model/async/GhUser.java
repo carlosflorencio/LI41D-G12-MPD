@@ -36,10 +36,6 @@ public class GhUser implements IGhUser {
     private final String company;
     private Future<Stream<IGhOrg>> orgs;
 
-    public GhUser(GhUserDto dto){
-        this(dto, null);
-    }
-
     public GhUser(GhUserDto dto, Future<Stream<IGhOrg>> orgs) {
         this.id = dto.id;
         this.login = dto.login;
