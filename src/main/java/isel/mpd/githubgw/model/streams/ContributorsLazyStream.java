@@ -50,7 +50,7 @@ public class ContributorsLazyStream implements Iterable<IGhUser> {
             public boolean hasNext() {
                 try {
                     if(curr >= PER_PAGE * page){
-                        list.addAll(service.gh.getRepoContributors(org, repo, page++).get());
+                        list.addAll(service.gh.getRepoContributors(org, repo, ++page).get());
                     }
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
@@ -62,7 +62,8 @@ public class ContributorsLazyStream implements Iterable<IGhUser> {
             @Override
             public IGhUser next() {
                 if(hasNext()) {
-                    CompletableFuture<Stream<IGhOrg>> future = service.gh.getUserOrgs(org)
+                    GhUserDto dto = list.get(curr);
+                    CompletableFuture<Stream<IGhOrg>> future = service.gh.getUserOrgs(dto.login)
                             .thenApply((listOrgsDto) -> listOrgsDto.stream()
                                     .map((dtoAux) -> {
                                         IGhOrg organization = null;
@@ -73,7 +74,6 @@ public class ContributorsLazyStream implements Iterable<IGhUser> {
                                         }
                                     }));
 
-                    GhUserDto dto = list.get(curr);
                     IGhUser u = new GhUser(dto, future);
                     Set<IGhOrg> s = null;
 
@@ -83,6 +83,7 @@ public class ContributorsLazyStream implements Iterable<IGhUser> {
                     }
                     s.add(orgObj);
                     curr++;
+                    return u;
                 }
                 throw new NoSuchElementException();
             }

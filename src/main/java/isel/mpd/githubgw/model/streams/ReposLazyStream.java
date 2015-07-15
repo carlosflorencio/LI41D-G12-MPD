@@ -78,4 +78,8 @@ public class ReposLazyStream implements Iterable<IGhRepo> {
             }
         };
     }
+
+    public static void clearCache() {
+        cachedContributors.clear();
+    }
 }

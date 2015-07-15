@@ -20,8 +20,10 @@ import isel.mpd.githubgw.model.IGhOrg;
 import isel.mpd.githubgw.model.IGhRepo;
 import isel.mpd.githubgw.model.IGhUser;
 import isel.mpd.githubgw.model.async.GhServiceAsync;
+import isel.mpd.githubgw.model.streams.ReposLazyStream;
 import isel.mpd.githubgw.webapi.GhApi;
 import isel.mpd.util.HttpGwAsync;
+import org.junit.After;
 import org.junit.Test;
 
 import java.util.List;
@@ -35,6 +37,11 @@ import static junit.framework.Assert.assertEquals;
  * Created by Miguel Gamboa on 08-06-2015.
  */
 public class GhAsyncTest {
+
+    @After
+    public void clean() {
+        ReposLazyStream.clearCache();
+    }
 
     @Test
     public void test_gh_async_service_get_repos_from_organization() throws Exception {
