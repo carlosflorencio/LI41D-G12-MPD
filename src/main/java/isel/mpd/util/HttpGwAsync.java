@@ -43,8 +43,7 @@ public class HttpGwAsync implements AutoCloseable {
 
     public CompletableFuture<Response> getDataAsync(
             String path,
-            Pair<String, String>...headers)
-    {
+            Pair<String, String>... headers) {
         final CompletableFuture<Response> promise = new CompletableFuture<>();
         AsyncHttpClient.BoundRequestBuilder request = asyncHttpClient.prepareGet(path);
         for (Pair<String, String> p : headers) request.addHeader(p.key, p.value);
@@ -56,8 +55,7 @@ public class HttpGwAsync implements AutoCloseable {
     }
 
     private <T> AsyncCompletionHandler<Response> asyncHandler(
-            final CompletableFuture<Response> promise)
-    {
+            final CompletableFuture<Response> promise) {
         return new AsyncCompletionHandler<Response>() {
             @Override
             public Response onCompleted(Response response) throws Exception {
@@ -70,8 +68,7 @@ public class HttpGwAsync implements AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception
-    {
+    public void close() throws Exception {
         if (!asyncHttpClient.isClosed())
             asyncHttpClient.close();
     }

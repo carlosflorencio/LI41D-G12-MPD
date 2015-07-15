@@ -11,7 +11,7 @@ public class Printer {
 
 
     public void print(Iterable<String> weatherData, Supplier<OutputStream> supOut) {
-        try(PrintWriter w = new PrintWriter(supOut.get())) {
+        try (PrintWriter w = new PrintWriter(supOut.get())) {
             for (String s : weatherData)
                 w.println(s + "\n");
         }

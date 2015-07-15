@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 
 /**
  * Supplies a Stream from am HTTP Url.
- *
+ * <p>
  * The stream is the result of making the request to the specified Url and contains the response.
  */
 public class HttpUrlStreamSupplier implements Supplier<InputStream> {
@@ -29,7 +29,7 @@ public class HttpUrlStreamSupplier implements Supplier<InputStream> {
             URL uri = new URL(url);
 
             urlConnection = (HttpURLConnection) uri.openConnection();
-            if(urlConnection.getResponseCode() != 200) {
+            if (urlConnection.getResponseCode() != 200) {
                 System.out.println("Server returned code " + urlConnection.getResponseCode());
                 return null;
             }
@@ -41,8 +41,8 @@ public class HttpUrlStreamSupplier implements Supplier<InputStream> {
             byte[] data = ByteStreams.toByteArray(connInputStream);
             System.out.printf("Read %d bytes\n", data.length);
             return new ByteArrayInputStream(data);
-            
-            
+
+
         } catch (IOException e) {
             System.out.println(e);
             return null;

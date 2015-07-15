@@ -31,9 +31,13 @@ import java.util.stream.Stream;
 public class GhUser implements IGhUser {
 
     private final int id;
+
     private final String login;
+
     private final String name;
+
     private final String company;
+
     private Future<Stream<IGhOrg>> orgs;
 
     public GhUser(GhUserDto dto, Future<Stream<IGhOrg>> orgs) {

@@ -30,13 +30,19 @@ import java.util.stream.StreamSupport;
 /**
  * Created by Miguel Gamboa on 05-06-2015.
  */
-public class GhOrg implements IGhOrg{
-    public final int id;
-    public final String login;
-    public final String name;
-    public final String location;
-    public final GhServiceAsync service;
-    public Future<List<GhRepoDto>> futureList;
+public class GhOrg implements IGhOrg {
+
+    private final int id;
+
+    private final String login;
+
+    private final String name;
+
+    private final String location;
+
+    private final GhServiceAsync service;
+
+    private Future<List<GhRepoDto>> futureList;
 
     public GhOrg(
             int id,

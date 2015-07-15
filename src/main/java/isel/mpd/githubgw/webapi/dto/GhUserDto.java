@@ -17,18 +17,24 @@
 package isel.mpd.githubgw.webapi.dto;
 
 /**
- * Created by Miguel Gamboa on 05-06-2015.
+ * Helper class for a {@code GhUser}
  */
 public class GhUserDto {
 
     public int id;
+
     public String login;
+
     public String name;
+
     public String location;
+
     public String company;
+
     public String type;
 
-    public GhUserDto() {}
+    public GhUserDto() {
+    }
 
     @Override
     public String toString() {

@@ -19,17 +19,17 @@ package isel.mpd.githubgw.model;
 import java.util.stream.Stream;
 
 /**
- * Created by Miguel Gamboa on 05-06-2015.
+ * Github User Interface
  */
 public interface IGhUser {
 
-    public int getId();
+    int getId();
 
-    public String getLogin() ;
+    String getLogin();
 
-    public String getName() ;
+    String getName();
 
-    public String getCompany() ;
+    String getCompany();
 
-    public Stream<IGhOrg> getOrgs() ;
+    Stream<IGhOrg> getOrgs();
 }

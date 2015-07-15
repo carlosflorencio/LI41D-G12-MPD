@@ -2,10 +2,9 @@ package isel.mpd.jsonzai.utils;
 
 import org.junit.Test;
 
-import java.lang.reflect.Array;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 public class TypeUtilsTest {
 

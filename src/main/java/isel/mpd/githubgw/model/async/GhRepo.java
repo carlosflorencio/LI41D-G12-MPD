@@ -30,16 +30,26 @@ import java.util.stream.Stream;
  * Created by Miguel Gamboa on 08-06-2015.
  */
 public class GhRepo implements IGhRepo {
-    final int id;
-    final String name;
-    final String fullName;
-    final String description;
-    final int size;
-    final int stargazersCount;
-    final int watchersCount;
-    final String language;
-    final IGhOrg owner;
-    final Future<Stream<IGhUser>> contributors;
+
+    private final int id;
+
+    private final String name;
+
+    private final String fullName;
+
+    private final String description;
+
+    private final int size;
+
+    private final int stargazersCount;
+
+    private final int watchersCount;
+
+    private final String language;
+
+    private final IGhOrg owner;
+
+    private final Future<Stream<IGhUser>> contributors;
 
     public GhRepo(int id, String name, String fullName, String description, int size, int stargazersCount, int watchersCount, String language, IGhOrg owner, Future<Stream<IGhUser>> contributors) {
         this.id = id;

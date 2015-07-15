@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import java.lang.reflect.Array;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 public class TypeFactoryJsonTest {
 
@@ -66,7 +66,7 @@ public class TypeFactoryJsonTest {
     }
 
 
-    @Test(expected=TypeCreatorNotFound.class)
+    @Test(expected = TypeCreatorNotFound.class)
     public void testGetCreatorNotFound() throws TypeCreatorNotFound {
         TypeFactoryJson<Class<?>> factory = new TypeFactoryJson<>();
 

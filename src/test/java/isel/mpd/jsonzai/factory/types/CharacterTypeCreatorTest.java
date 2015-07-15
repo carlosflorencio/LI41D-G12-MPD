@@ -4,8 +4,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class CharacterTypeCreatorTest {
 
@@ -14,7 +12,7 @@ public class CharacterTypeCreatorTest {
     private static CharacterTypeCreator creator;
 
     @BeforeClass
-    public static void setUp(){
+    public static void setUp() {
         value = "\"o\"";
         wrongValue = "\"Ola\"";
 

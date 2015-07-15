@@ -16,8 +16,8 @@ public class SimpleStringSupplierFromStream extends StringSupplier {
     /**
      * Initializes a newly created {@code SimpleStringSupplierFromStream} object
      * given a {@link Supplier} for {@link InputStream}
-     * @param inputStreamSupplier the {@link Supplier} for {@link InputStream}
      *
+     * @param inputStreamSupplier the {@link Supplier} for {@link InputStream}
      */
     public SimpleStringSupplierFromStream(Supplier<InputStream> inputStreamSupplier) {
         this.inputStreamSupplier = inputStreamSupplier;

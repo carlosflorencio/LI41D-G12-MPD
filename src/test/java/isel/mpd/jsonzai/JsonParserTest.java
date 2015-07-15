@@ -17,9 +17,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class JsonParserTest {
 
@@ -116,7 +114,6 @@ public class JsonParserTest {
 
         assertEquals("Not Gays", obj.status);
     }
-
 
 
     private void assertUserEntity(String name, int age, UserEntity should) {

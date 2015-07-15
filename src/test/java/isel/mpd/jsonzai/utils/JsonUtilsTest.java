@@ -38,7 +38,7 @@ public class JsonUtilsTest {
 
     @Test
     public void testClean() throws Exception {
-       String clean = JsonUtils.clean(json);
+        String clean = JsonUtils.clean(json);
 
         assertFalse(clean.contains("\n"));
         assertEquals(countSpaces(clean), 3); //only 3 space in json values
@@ -47,7 +47,7 @@ public class JsonUtilsTest {
     private int countSpaces(String clean) {
         int count = 0;
         for (int i = 0; i < clean.length(); i++) {
-            if(clean.charAt(i) == ' ')
+            if (clean.charAt(i) == ' ')
                 count++;
         }
 

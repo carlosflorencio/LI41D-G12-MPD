@@ -12,12 +12,12 @@ public class LongTypeCreatorTest {
     private static LongTypeCreator creator;
 
     @BeforeClass
-    public static void setUp(){
+    public static void setUp() {
         creator = new LongTypeCreator();
     }
 
     @Test
-    public void LongTypeCreatorMethodApplyTest(){
+    public void LongTypeCreatorMethodApplyTest() {
         assertThat(1897685L, is(equalTo(creator.apply("1897685"))));
     }
 }
