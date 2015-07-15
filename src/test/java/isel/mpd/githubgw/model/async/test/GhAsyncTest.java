@@ -55,7 +55,9 @@ public class GhAsyncTest {
                  * 3.a One request through GhApi.getRepoContributors
                  * per GhRepo object instantiated.
                  */
-                List<IGhRepo> repos = org.get().getRepos().limit(30).collect(toList());
+                List<IGhRepo> repos = org.get().getRepos()
+                        .limit(30)
+                        .collect(toList());
                 assertEquals(2 + repos.size(), httpGw.getNrOfRequests());
                 assertEquals(2, httpGw.getNrOfResponses());
 

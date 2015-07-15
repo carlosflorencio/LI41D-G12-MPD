@@ -17,6 +17,7 @@
 
 package isel.mpd.githubgw.model;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 /**
@@ -33,4 +34,6 @@ public interface IGhOrg {
     public String getLocation();
 
     public Stream<IGhRepo> getRepos();
+
+    public List<IGhRepo> getCache();
 }

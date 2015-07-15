@@ -63,7 +63,12 @@ public class ReposLazyStream implements Iterable<IGhRepo> {
                             .findFirst()
                             .get();
                     Future<Stream<IGhUser>> future = service.getRepoContributors(org.getLogin(), list.get(curr).name, org);
-                    return new GhRepo(list.get(curr++), org, future);
+                    IGhRepo repo = new GhRepo(list.get(curr++), org, future);
+
+                    service.orgs.stream().filter((orgAuz) -> orgAuz.getLogin().equals(org.getLogin()))
+                            .findFirst()
+                            .get().getCache().add(repo);
+                    return repo;
                 }
                 throw new NoSuchElementException();
             }
