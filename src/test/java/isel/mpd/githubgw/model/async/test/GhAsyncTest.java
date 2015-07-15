@@ -38,14 +38,14 @@ public class GhAsyncTest {
 
     @Test
     public void test_gh_async_service_get_repos_from_organization() throws Exception {
-        try(HttpGwAsync httpGw = new HttpGwAsync ()) {
+        try (HttpGwAsync httpGw = new HttpGwAsync()) {
             try (GhServiceAsync gh = new GhServiceAsync(new GhApi(httpGw))) {
                 Future<IGhOrg> org = gh.getOrg("zendframework");
-                assertEquals(1, httpGw.getNrOfRequests()); // 1.a One request through GhApi.getUserInfo
+                assertEquals(1, httpGw.getNrOfRequests()); // 1.a One request through GhApi.getOrg
                 assertEquals(0, httpGw.getNrOfResponses());
 
                 org.get(); // Wait for Response
-                assertEquals(1, httpGw.getNrOfResponses()); // 1.b One response received for GhApi.getUserInfo
+                assertEquals(1, httpGw.getNrOfResponses()); // 1.b One response received for GhApi.getOrg
                 assertEquals(2, httpGw.getNrOfRequests());  // 2.a One request through GhApi.getOrgRepos
 
                 org.get().getRepos(); // -> Wait for Stream<IGhRepo>
@@ -68,7 +68,11 @@ public class GhAsyncTest {
                 /*
                  * 3.c NO requests through GhApi.getRepoContributors -- already cached
                  */
-                org.get().getRepos().limit(30).map(repo -> repo.getContributors()).collect(toList()); // List<Stream<IGhUser>>
+                org.get()
+                        .getRepos()
+                        .limit(30)
+                        .map(repo -> repo.getContributors())
+                        .collect(toList()); // List<Stream<IGhUser>>
                 assertEquals(2 + repos.size(), httpGw.getNrOfRequests());
                 assertEquals(2 + repos.size(), httpGw.getNrOfResponses());
 
@@ -92,7 +96,7 @@ public class GhAsyncTest {
 
     @Test
     public void test_gh_async_service_cyclic_ref_over_organizations() throws Exception {
-        try(HttpGwAsync httpGw = new HttpGwAsync ()) {
+        try (HttpGwAsync httpGw = new HttpGwAsync()) {
             try (GhServiceAsync gh = new GhServiceAsync(new GhApi(httpGw))) {
 
                 IGhUser user = gh.getOrg("zendframework")
@@ -117,33 +121,8 @@ public class GhAsyncTest {
     }
 
     @Test
-    public void test_gh_async_get_repos_from_org() throws Exception {
-        List<IGhRepo> repos;
-
-        try(HttpGwAsync httpGw = new HttpGwAsync ()) {
-            try (GhServiceAsync gh = new GhServiceAsync(new GhApi(httpGw))) {
-                Future<IGhOrg> org = gh.getOrg("zendframework");
-                assertEquals(1, httpGw.getNrOfRequests()); // 1.a One request through GhApi.getUserInfo
-                assertEquals(0, httpGw.getNrOfResponses());
-
-                org.get(); // Wait for Response
-                assertEquals(1, httpGw.getNrOfResponses()); // 1.b One response received for GhApi.getUserInfo
-                assertEquals(2, httpGw.getNrOfRequests());  // 2.a One request through GhApi.getOrgRepos
-
-                repos = org.get().getRepos().limit(32).collect(toList());
-                assertEquals(3 + repos.size(), httpGw.getNrOfRequests());
-
-                //Assert Org name in Repos
-                //repos.forEach((repo) -> assertEquals("Zend Framework", repo.getOwner().getName()));
-
-            }
-        }
-
-    }
-
-    @Test
     public void test_gh_async_get_stream_repos_paginated() throws Exception {
-        try(HttpGwAsync httpGw = new HttpGwAsync ()) {
+        try (HttpGwAsync httpGw = new HttpGwAsync()) {
             try (GhServiceAsync gh = new GhServiceAsync(new GhApi(httpGw))) {
                 List<IGhRepo> repos = null;
 
@@ -154,8 +133,8 @@ public class GhAsyncTest {
                 assertEquals(2, httpGw.getNrOfRequests());
 
                 repos = org.get().getRepos().limit(32).collect(toList());
-                assertEquals(3, httpGw.getNrOfRequests());
-                assertEquals(3, httpGw.getNrOfResponses());
+                assertEquals(2 + 1 + repos.size(), httpGw.getNrOfRequests());
+                assertEquals(2 + 30 + 1, httpGw.getNrOfResponses());
 
                 assertEquals(32, repos.size());
 
