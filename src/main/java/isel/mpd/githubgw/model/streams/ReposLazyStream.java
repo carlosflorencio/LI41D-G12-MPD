@@ -7,9 +7,7 @@ import isel.mpd.githubgw.model.async.GhRepo;
 import isel.mpd.githubgw.model.async.GhServiceAsync;
 import isel.mpd.githubgw.webapi.dto.GhRepoDto;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -23,9 +21,14 @@ public class ReposLazyStream implements Iterable<IGhRepo> {
     private List<GhRepoDto> list;
     private int id;
     private int page;
+    private static Map<String, Future<Stream<IGhUser>>> cachedContributors;
 
-    public ReposLazyStream(GhServiceAsync api, int id,CompletableFuture<List<GhRepoDto>> l ){
-        this.service = api;
+    static {
+        cachedContributors = new HashMap<>();
+    }
+
+    public ReposLazyStream(GhServiceAsync service, int id,Future<List<GhRepoDto>> l ){
+        this.service = service;
         this.id = id;
         this.page = 1;
         try {
@@ -45,8 +48,7 @@ public class ReposLazyStream implements Iterable<IGhRepo> {
                 System.out.println(curr + " x= " + PER_PAGE * page);
                 try {
                     if(curr >= PER_PAGE * page){
-                        page++;
-                        list.addAll(service.gh.getOrgRepos(id, page).get());
+                        list.addAll(service.gh.getOrgRepos(id, ++page).get());
                     }
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
@@ -62,13 +64,15 @@ public class ReposLazyStream implements Iterable<IGhRepo> {
                             .filter(k -> k.getId() == id)
                             .findFirst()
                             .get();
-                    Future<Stream<IGhUser>> future = service.getRepoContributors(org.getLogin(), list.get(curr).name, org);
-                    IGhRepo repo = new GhRepo(list.get(curr++), org, future);
 
-                    service.orgs.stream().filter((orgAuz) -> orgAuz.getLogin().equals(org.getLogin()))
-                            .findFirst()
-                            .get().getCache().add(repo);
-                    return repo;
+                    String repoName = list.get(curr).name;
+                    Future<Stream<IGhUser>> fUsers = cachedContributors.get(repoName);
+                    if(fUsers == null){
+                        fUsers = service.getRepoContributors(org.getLogin(),repoName,org);
+                        cachedContributors.put(repoName, fUsers);
+                    }
+
+                    return new GhRepo(list.get(curr++), org, fUsers);
                 }
                 throw new NoSuchElementException();
             }

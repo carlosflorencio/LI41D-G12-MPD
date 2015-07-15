@@ -69,7 +69,7 @@ public class ContributorsLazyStream implements Iterable<IGhUser> {
                                         if ((organization = containsOrg(dtoAux)) != null) {
                                             return organization;
                                         } else {
-                                            return new GhOrg(dtoAux, service.getRepos(dtoAux.id));
+                                            return new GhOrg(dtoAux, service);
                                         }
                                     }));
 

@@ -34,6 +34,4 @@ public interface IGhOrg {
     public String getLocation();
 
     public Stream<IGhRepo> getRepos();
-
-    public List<IGhRepo> getCache();
 }

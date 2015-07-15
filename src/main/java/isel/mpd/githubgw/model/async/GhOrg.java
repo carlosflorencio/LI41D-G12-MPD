@@ -18,13 +18,16 @@ package isel.mpd.githubgw.model.async;
 
 import isel.mpd.githubgw.model.IGhOrg;
 import isel.mpd.githubgw.model.IGhRepo;
+import isel.mpd.githubgw.model.streams.ReposLazyStream;
 import isel.mpd.githubgw.webapi.dto.GhOrgDto;
+import isel.mpd.githubgw.webapi.dto.GhRepoDto;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Created by Miguel Gamboa on 05-06-2015.
@@ -34,29 +37,27 @@ public class GhOrg implements IGhOrg{
     public final String login;
     public final String name;
     public final String location;
-    public final Future<Stream<IGhRepo>> repos;
-
-    private List<IGhRepo> cache;
+    public final GhServiceAsync service;
+    public Future<List<GhRepoDto>> futureList;
 
     public GhOrg(
             int id,
             String login,
             String name,
             String location,
-            Future<Stream<IGhRepo>> repos) {
+            GhServiceAsync service) {
         this.id = id;
         this.login = login;
         this.name = name;
         this.location = location;
-        this.repos = repos;
-
-        cache = new LinkedList<>();
+        this.service = service;
+        this.futureList = this.service.gh.getOrgRepos(this.id);
     }
 
     public GhOrg(
             GhOrgDto dto,
-            Future<Stream<IGhRepo>> repos) {
-        this(dto.id, dto.login, dto.name, dto.location, repos);
+            GhServiceAsync service) {
+        this(dto.id, dto.login, dto.name, dto.location, service);
     }
 
     @Override
@@ -81,18 +82,7 @@ public class GhOrg implements IGhOrg{
 
     @Override
     public Stream<IGhRepo> getRepos() {
-        try {
-            if(cache.size() > 0){
-                return cache.stream();
-            }
-            return repos.get();
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public List<IGhRepo> getCache() {
-        return cache;
+        ReposLazyStream i = new ReposLazyStream(service, id, futureList);
+        return StreamSupport.stream((i.spliterator()), false);
     }
 }
