@@ -36,12 +36,8 @@ import java.util.stream.StreamSupport;
 public class GhServiceAsync implements AutoCloseable {
 
     public final GhApi gh;
-    public HashMap<IGhUser, Set<IGhOrg>> identities;
-    public Set<IGhOrg> orgs;
-
-    public GhServiceAsync() {
-        this(new GhApi());
-    }
+    private HashMap<IGhUser, Set<IGhOrg>> identities;
+    private Set<IGhOrg> orgs;
 
     public GhServiceAsync(GhApi ghApi) {
         this.gh = ghApi;
@@ -49,6 +45,13 @@ public class GhServiceAsync implements AutoCloseable {
         this.identities = new HashMap<>();
     }
 
+    /**
+     * Request an Organization
+     * @param login
+     * @return Future Org
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
     public CompletableFuture<IGhOrg> getOrg(String login) throws ExecutionException, InterruptedException {
         return this.gh.getOrg(login).thenApplyAsync((GhOrgDto dto) -> {
             IGhOrg org = new GhOrg(dto, this);
@@ -56,6 +59,44 @@ public class GhServiceAsync implements AutoCloseable {
 
             return org;
         });
+    }
+
+    /**
+     * Request Contributors of a Repository
+     * @param login
+     * @param name
+     * @param org
+     * @return Future Stream
+     */
+    public CompletableFuture<Stream<IGhUser>> getRepoContributors(String login, String name, IGhOrg org) {
+        CompletableFuture<List<GhUserDto>> future = this.gh.getRepoContributors(login, name, 1);
+        return CompletableFuture.supplyAsync(() -> {
+            Iterable<IGhUser> i = new ContributorsLazyStream(this, org, future);
+            return StreamSupport.stream((i.spliterator()), false);
+        });
+    }
+
+    public void addToIdentities(IGhUser user, IGhOrg orgObj) {
+        Set<IGhOrg> set;
+
+        if ((set = this.identities.get(user)) == null) {
+            set = new TreeSet<>((o, o1) -> o.getId() - o1.getId());
+            this.identities.put(user, set);
+        }
+        set.add(orgObj);
+    }
+
+    public IGhOrg containsOrg(GhOrgDto dto1) {
+        for (IGhOrg org : this.orgs){
+            if(org.getLogin().equals(dto1.login)){
+                return org;
+            }
+        }
+        return null;
+    }
+
+    public Stream<IGhOrg> getOrgs() {
+        return this.orgs.stream();
     }
 
     @Override
@@ -67,13 +108,4 @@ public class GhServiceAsync implements AutoCloseable {
     public boolean isClosed() {
         return gh.isClosed();
     }
-
-    public CompletableFuture<Stream<IGhUser>> getRepoContributors(String login, String name, IGhOrg org) {
-        CompletableFuture<List<GhUserDto>> future = this.gh.getRepoContributors(login, name, 1);
-        return CompletableFuture.supplyAsync(() -> {
-            Iterable<IGhUser> i = new ContributorsLazyStream(this, org, future);
-            return StreamSupport.stream((i.spliterator()), false);
-        });
-    }
-
 }

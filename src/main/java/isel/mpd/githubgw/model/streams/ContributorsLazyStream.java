@@ -45,7 +45,7 @@ public class ContributorsLazyStream implements Iterable<IGhUser> {
                         list.addAll(service.gh.getRepoContributors(orgObj.getLogin(), orgObj.getName(), ++page).get());
                     }
                 } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
+                    e.printStackTrace(); // Ooops, try again?
                 }
 
                 return curr < list.size();
@@ -54,39 +54,27 @@ public class ContributorsLazyStream implements Iterable<IGhUser> {
             @Override
             public IGhUser next() {
                 if(hasNext()) {
-                    GhUserDto dto = list.get(curr);
-                    CompletableFuture<Stream<IGhOrg>> future = service.gh.getUserOrgs(dto.login)
+                    GhUserDto dto = list.get(curr++);
+
+                    //Convert from Org dto
+                    CompletableFuture<Stream<IGhOrg>> futureOrgs = service.gh.getUserOrgs(dto.login)
                             .thenApply((listOrgsDto) -> listOrgsDto.stream()
                                     .map((dtoAux) -> {
+                                        //Cached Organizations
                                         IGhOrg organization = null;
-                                        if ((organization = containsOrg(dtoAux)) != null) {
+                                        if ((organization = service.containsOrg(dtoAux)) != null) {
                                             return organization;
                                         } else {
                                             return new GhOrg(dtoAux, service);
                                         }
                                     }));
 
-                    IGhUser user = new GhUser(dto, future);
-                    Set<IGhOrg> set;
+                    IGhUser user = new GhUser(dto, futureOrgs);
+                    service.addToIdentities(user, orgObj);
 
-                    if ((set = service.identities.get(user)) == null) {
-                        set = new TreeSet<>((o, o1) -> o.getId() - o1.getId());
-                        service.identities.put(user, set);
-                    }
-                    set.add(orgObj);
-                    curr++;
                     return user;
                 }
                 throw new NoSuchElementException();
-            }
-
-            private IGhOrg containsOrg(GhOrgDto dto1) {
-                for (IGhOrg org : service.orgs){
-                    if(org.getLogin().equals(dto1.login)){
-                        return org;
-                    }
-                }
-                return null;
             }
         };
     }
