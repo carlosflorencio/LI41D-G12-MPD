@@ -71,7 +71,7 @@ public class GhServiceAsync implements AutoCloseable {
     public CompletableFuture<Stream<IGhUser>> getRepoContributors(String login, String name, IGhOrg org) {
         CompletableFuture<List<GhUserDto>> future = this.gh.getRepoContributors(login, name, 1);
         return CompletableFuture.supplyAsync(() -> {
-            Iterable<IGhUser> i = new ContributorsLazyStream(this, login, name, org, future);
+            Iterable<IGhUser> i = new ContributorsLazyStream(this, org, future);
             return StreamSupport.stream((i.spliterator()), false);
         });
     }

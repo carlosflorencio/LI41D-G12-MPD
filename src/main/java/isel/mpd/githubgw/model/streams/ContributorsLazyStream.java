@@ -19,15 +19,11 @@ public class ContributorsLazyStream implements Iterable<IGhUser> {
 
     private GhServiceAsync service;
     private List<GhUserDto> list;
-    private String org;
-    private String repo;
     private IGhOrg orgObj;
     private int page;
 
-    public ContributorsLazyStream(GhServiceAsync api, String org, String repo, IGhOrg orgObj, CompletableFuture<List<GhUserDto>> l){
+    public ContributorsLazyStream(GhServiceAsync api, IGhOrg orgObj, CompletableFuture<List<GhUserDto>> l){
         this.service = api;
-        this.org = org;
-        this.repo = repo;
         this.orgObj = orgObj;
         this.page = 1;
         try {
@@ -46,7 +42,7 @@ public class ContributorsLazyStream implements Iterable<IGhUser> {
             public boolean hasNext() {
                 try {
                     if(curr >= PER_PAGE * page){
-                        list.addAll(service.gh.getRepoContributors(org, repo, ++page).get());
+                        list.addAll(service.gh.getRepoContributors(orgObj.getLogin(), orgObj.getName(), ++page).get());
                     }
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
@@ -70,16 +66,16 @@ public class ContributorsLazyStream implements Iterable<IGhUser> {
                                         }
                                     }));
 
-                    IGhUser u = new GhUser(dto, future);
-                    Set<IGhOrg> s = null;
+                    IGhUser user = new GhUser(dto, future);
+                    Set<IGhOrg> set;
 
-                    if ((s = service.identities.get(u)) == null) {
-                        s = new TreeSet<>((o, o1) -> o.getId() - o1.getId());
-                        service.identities.put(u, s);
+                    if ((set = service.identities.get(user)) == null) {
+                        set = new TreeSet<>((o, o1) -> o.getId() - o1.getId());
+                        service.identities.put(user, set);
                     }
-                    s.add(orgObj);
+                    set.add(orgObj);
                     curr++;
-                    return u;
+                    return user;
                 }
                 throw new NoSuchElementException();
             }
