@@ -1,20 +1,16 @@
 package isel.mpd.githubgw.model.streams;
 
 import isel.mpd.githubgw.model.IGhOrg;
-import isel.mpd.githubgw.model.IGhRepo;
 import isel.mpd.githubgw.model.IGhUser;
 import isel.mpd.githubgw.model.async.GhOrg;
-import isel.mpd.githubgw.model.async.GhRepo;
 import isel.mpd.githubgw.model.async.GhServiceAsync;
 import isel.mpd.githubgw.model.async.GhUser;
 import isel.mpd.githubgw.webapi.dto.GhOrgDto;
-import isel.mpd.githubgw.webapi.dto.GhRepoDto;
 import isel.mpd.githubgw.webapi.dto.GhUserDto;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.stream.Stream;
 
 public class ContributorsLazyStream implements Iterable<IGhUser> {

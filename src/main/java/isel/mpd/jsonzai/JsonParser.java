@@ -6,7 +6,9 @@ import isel.mpd.jsonzai.factory.exceptions.TypeCreatorNotFound;
 import isel.mpd.jsonzai.utils.JsonUtils;
 import isel.mpd.jsonzai.utils.TypeUtils;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
 import java.util.LinkedList;
 import java.util.List;
 

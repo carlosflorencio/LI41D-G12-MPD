@@ -8,7 +8,6 @@ import isel.mpd.githubgw.model.async.GhServiceAsync;
 import isel.mpd.githubgw.webapi.dto.GhRepoDto;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Stream;

@@ -17,7 +17,6 @@
 
 package isel.mpd.githubgw.model;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 /**

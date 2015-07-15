@@ -17,15 +17,11 @@
 
 package isel.mpd.githubgw.model.async;
 
-import com.google.common.base.Suppliers;
 import isel.mpd.githubgw.model.IGhOrg;
-import isel.mpd.githubgw.model.IGhRepo;
 import isel.mpd.githubgw.model.IGhUser;
 import isel.mpd.githubgw.model.streams.ContributorsLazyStream;
-import isel.mpd.githubgw.model.streams.ReposLazyStream;
 import isel.mpd.githubgw.webapi.GhApi;
 import isel.mpd.githubgw.webapi.dto.GhOrgDto;
-import isel.mpd.githubgw.webapi.dto.GhRepoDto;
 import isel.mpd.githubgw.webapi.dto.GhUserDto;
 
 import java.util.HashMap;
@@ -36,7 +32,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-import com.google.common.base.Supplier;
 
 public class GhServiceAsync implements AutoCloseable {
 
