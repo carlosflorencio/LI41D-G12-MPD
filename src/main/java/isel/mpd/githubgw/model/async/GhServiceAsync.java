@@ -43,7 +43,7 @@ public class GhServiceAsync implements AutoCloseable {
 
 
     public GhServiceAsync() {
-        this(null);
+        this(new GhApi());
     }
 
     public GhServiceAsync(GhApi ghApi) {
