@@ -35,11 +35,19 @@ import java.util.stream.StreamSupport;
 
 public class GhServiceAsync implements AutoCloseable {
 
+    private static GhServiceAsync instance;
+
     public final GhApi gh;
     private HashMap<IGhUser, Set<IGhOrg>> identities;
     private Set<IGhOrg> orgs;
 
+
+    public GhServiceAsync() {
+        this(null);
+    }
+
     public GhServiceAsync(GhApi ghApi) {
+        instance = this;
         this.gh = ghApi;
         this.orgs = new TreeSet<>((o, o1) -> o.getId() - o1.getId());
         this.identities = new HashMap<>();
@@ -54,7 +62,7 @@ public class GhServiceAsync implements AutoCloseable {
      */
     public CompletableFuture<IGhOrg> getOrg(String login) throws ExecutionException, InterruptedException {
         return this.gh.getOrg(login).thenApplyAsync((GhOrgDto dto) -> {
-            IGhOrg org = new GhOrg(dto, this);
+            IGhOrg org = new GhOrg(dto);
             this.orgs.add(org);
 
             return org;
@@ -71,7 +79,7 @@ public class GhServiceAsync implements AutoCloseable {
     public CompletableFuture<Stream<IGhUser>> getRepoContributors(String login, String name, IGhOrg org) {
         CompletableFuture<List<GhUserDto>> future = this.gh.getRepoContributors(login, name, 1);
         return CompletableFuture.supplyAsync(() -> {
-            Iterable<IGhUser> i = new ContributorsLazyStream(this, org, future);
+            Iterable<IGhUser> i = new ContributorsLazyStream(org, future);
             return StreamSupport.stream((i.spliterator()), false);
         });
     }
@@ -107,5 +115,12 @@ public class GhServiceAsync implements AutoCloseable {
 
     public boolean isClosed() {
         return gh.isClosed();
+    }
+
+    public static GhServiceAsync getInstance() {
+        if(instance == null){
+            instance = new GhServiceAsync();
+        }
+        return instance;
     }
 }

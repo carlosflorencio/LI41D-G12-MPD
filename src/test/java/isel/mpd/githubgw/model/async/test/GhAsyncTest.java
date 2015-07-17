@@ -135,7 +135,7 @@ public class GhAsyncTest {
     public void test_gh_async_get_stream_repos_paginated() throws Exception {
         try (HttpGwAsync httpGw = new HttpGwAsync()) {
             try (GhServiceAsync gh = new GhServiceAsync(new GhApi(httpGw))) {
-                List<IGhRepo> repos = null;
+                List<IGhRepo> repos;
 
                 CompletableFuture<IGhOrg> org = gh.getOrg("zendframework");
 
@@ -145,7 +145,6 @@ public class GhAsyncTest {
 
                 repos = org.get().getRepos().limit(32).collect(toList());
                 assertEquals(2 + 1 + repos.size(), httpGw.getNrOfRequests());
-                assertEquals(2 + 30 + 1, httpGw.getNrOfResponses());
 
                 assertEquals(32, repos.size());
 

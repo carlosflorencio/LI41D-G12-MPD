@@ -40,28 +40,23 @@ public class GhOrg implements IGhOrg {
 
     private final String location;
 
-    private final GhServiceAsync service;
-
     private Future<List<GhRepoDto>> futureList;
 
     public GhOrg(
             int id,
             String login,
             String name,
-            String location,
-            GhServiceAsync service) {
+            String location) {
         this.id = id;
         this.login = login;
         this.name = name;
         this.location = location;
-        this.service = service;
-        this.futureList = this.service.gh.getOrgRepos(this.id);
+        this.futureList = GhServiceAsync.getInstance().gh.getOrgRepos(this.id);
     }
 
     public GhOrg(
-            GhOrgDto dto,
-            GhServiceAsync service) {
-        this(dto.id, dto.login, dto.name, dto.location, service);
+            GhOrgDto orgDto) {
+        this(orgDto.id, orgDto.login, orgDto.name, orgDto.location);
     }
 
     @Override
@@ -86,7 +81,7 @@ public class GhOrg implements IGhOrg {
 
     @Override
     public Stream<IGhRepo> getRepos() {
-        ReposLazyStream i = new ReposLazyStream(service, id, futureList);
+        ReposLazyStream i = new ReposLazyStream(id, futureList);
         return StreamSupport.stream((i.spliterator()), false);
     }
 }

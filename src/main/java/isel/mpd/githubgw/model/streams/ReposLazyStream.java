@@ -18,7 +18,7 @@ public class ReposLazyStream implements Iterable<IGhRepo> {
 
     private GhServiceAsync service;
     private List<GhRepoDto> list;
-    private int id;
+    private int orgId;
     private int page;
     private static Map<String, Future<Stream<IGhUser>>> cachedContributors; //maybe another way?
 
@@ -26,14 +26,14 @@ public class ReposLazyStream implements Iterable<IGhRepo> {
         cachedContributors = new HashMap<>();
     }
 
-    public ReposLazyStream(GhServiceAsync service, int id, Future<List<GhRepoDto>> l) {
-        this.service = service;
-        this.id = id;
+    public ReposLazyStream(int orgId, Future<List<GhRepoDto>> l) {
+        this.service = GhServiceAsync.getInstance();
+        this.orgId = orgId;
         this.page = 1;
         try {
             list = l.get();
         } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace(); // Ooops, try again?
+            e.printStackTrace();
         }
     }
 
@@ -47,10 +47,10 @@ public class ReposLazyStream implements Iterable<IGhRepo> {
                 System.out.println(curr + " x= " + PER_PAGE * page);
                 try {
                     if (curr >= PER_PAGE * page) {
-                        list.addAll(service.gh.getOrgRepos(id, ++page).get());
+                        list.addAll(service.gh.getOrgRepos(orgId, ++page).get());
                     }
                 } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace(); // Ooops, try again?
+                    e.printStackTrace();
                 }
 
                 return curr < list.size();
@@ -60,7 +60,7 @@ public class ReposLazyStream implements Iterable<IGhRepo> {
             public IGhRepo next() {
                 if (hasNext()) {
                     IGhOrg org = service.getOrgs()
-                            .filter(k -> k.getId() == id)
+                            .filter(k -> k.getId() == orgId)
                             .findFirst()
                             .get();
 

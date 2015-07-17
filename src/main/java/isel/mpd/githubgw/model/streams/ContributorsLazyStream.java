@@ -5,10 +5,11 @@ import isel.mpd.githubgw.model.IGhUser;
 import isel.mpd.githubgw.model.async.GhOrg;
 import isel.mpd.githubgw.model.async.GhServiceAsync;
 import isel.mpd.githubgw.model.async.GhUser;
-import isel.mpd.githubgw.webapi.dto.GhOrgDto;
 import isel.mpd.githubgw.webapi.dto.GhUserDto;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Stream;
@@ -19,12 +20,12 @@ public class ContributorsLazyStream implements Iterable<IGhUser> {
 
     private GhServiceAsync service;
     private List<GhUserDto> list;
-    private IGhOrg orgObj;
+    private IGhOrg organization;
     private int page;
 
-    public ContributorsLazyStream(GhServiceAsync api, IGhOrg orgObj, CompletableFuture<List<GhUserDto>> l){
-        this.service = api;
-        this.orgObj = orgObj;
+    public ContributorsLazyStream(IGhOrg organization, CompletableFuture<List<GhUserDto>> l){
+        this.service = GhServiceAsync.getInstance();
+        this.organization = organization;
         this.page = 1;
         try {
             list = l.get();
@@ -42,10 +43,10 @@ public class ContributorsLazyStream implements Iterable<IGhUser> {
             public boolean hasNext() {
                 try {
                     if(curr >= PER_PAGE * page){
-                        list.addAll(service.gh.getRepoContributors(orgObj.getLogin(), orgObj.getName(), ++page).get());
+                        list.addAll(service.gh.getRepoContributors(organization.getLogin(), organization.getName(), ++page).get());
                     }
                 } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace(); // Ooops, try again?
+                    e.printStackTrace();
                 }
 
                 return curr < list.size();
@@ -54,23 +55,23 @@ public class ContributorsLazyStream implements Iterable<IGhUser> {
             @Override
             public IGhUser next() {
                 if(hasNext()) {
-                    GhUserDto dto = list.get(curr++);
+                    GhUserDto userDto = list.get(curr++);
 
                     //Convert from Org dto
-                    CompletableFuture<Stream<IGhOrg>> futureOrgs = service.gh.getUserOrgs(dto.login)
+                    CompletableFuture<Stream<IGhOrg>> futureOrgs = service.gh.getUserOrgs(userDto.login)
                             .thenApply((listOrgsDto) -> listOrgsDto.stream()
-                                    .map((dtoAux) -> {
+                                    .map((orgDto) -> {
                                         //Cached Organizations
                                         IGhOrg organization = null;
-                                        if ((organization = service.containsOrg(dtoAux)) != null) {
+                                        if ((organization = service.containsOrg(orgDto)) != null) {
                                             return organization;
                                         } else {
-                                            return new GhOrg(dtoAux, service);
+                                            return new GhOrg(orgDto);
                                         }
                                     }));
 
-                    IGhUser user = new GhUser(dto, futureOrgs);
-                    service.addToIdentities(user, orgObj);
+                    IGhUser user = new GhUser(userDto, futureOrgs);
+                    service.addToIdentities(user, organization);
 
                     return user;
                 }
