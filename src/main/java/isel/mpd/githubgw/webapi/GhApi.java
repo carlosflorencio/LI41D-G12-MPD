@@ -35,7 +35,7 @@ public class GhApi implements AutoCloseable {
 
     final static String GH_URI = "https://api.github.com";
     final static String GH_VERSION = "application/vnd.github.v3+json";
-    final static String GH_TOKEN = "token 935fb49c6793577c1d0bfa92999c44ec8206db30";
+    final static String GH_TOKEN = "token 935fb49c6793574564692999c44ec8206db30";
     final static Pair<String, String>[] GH_HEADERS;
 
     static {
